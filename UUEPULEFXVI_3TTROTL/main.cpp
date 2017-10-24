@@ -373,7 +373,17 @@ int main()
 		if (Keyboard::isKeyPressed(Keyboard::D)) p->thrustR = true;
 		else p->thrustR = false;
 
-
+		//Game modes
+		if (Keyboard::isKeyPressed(Keyboard::Num0)) gameMode = 0;
+		if (Keyboard::isKeyPressed(Keyboard::Num1)) gameMode = 1;
+		if (Keyboard::isKeyPressed(Keyboard::Num2)) gameMode = 2;
+		if (Keyboard::isKeyPressed(Keyboard::Num3)) gameMode = 3;
+		if (Keyboard::isKeyPressed(Keyboard::Num4)) gameMode = 4;
+		if (Keyboard::isKeyPressed(Keyboard::Num5)) gameMode = 5;
+		if (Keyboard::isKeyPressed(Keyboard::Num6)) gameMode = 6;
+		if (Keyboard::isKeyPressed(Keyboard::Num7)) gameMode = 7;
+		if (Keyboard::isKeyPressed(Keyboard::Num8)) gameMode = 8;
+		if (Keyboard::isKeyPressed(Keyboard::Num9)) gameMode = 9;
 
 		for (auto a : entities)
 			for (auto b : entities)

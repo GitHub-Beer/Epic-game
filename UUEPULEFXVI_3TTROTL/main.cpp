@@ -135,7 +135,7 @@ public:
 class player : public Entity
 {
 public:
-	bool thrust;
+	bool thrustU,thrustD,thrustL,thrustR;
 
 	player()
 	{
@@ -144,10 +144,43 @@ public:
 
 	void update()
 	{
-		if (thrust)
+		if (thrustU)
 		{
 			dx += cos(angle*DEGTORAD)*0.2;
 			dy += sin(angle*DEGTORAD)*0.2;
+		}
+		else
+		{
+			dx *= 0.99;
+			dy *= 0.99;
+		}
+
+		if (thrustD)
+		{
+			dx -= cos(angle*DEGTORAD)*0.2;
+			dy -= sin(angle*DEGTORAD)*0.2;
+		}
+		else
+		{
+			dx *= 0.99;
+			dy *= 0.99;
+		}
+
+		if (thrustL)
+		{
+			dx += -sin(angle*DEGTORAD)*0.2;
+			dy += -cos(angle*DEGTORAD)*0.2;
+		}
+		else
+		{
+			dx *= 0.99;
+			dy *= 0.99;
+		}
+
+		if (thrustR)
+		{
+			dx += sin(angle*DEGTORAD)*0.2;
+			dy += cos(angle*DEGTORAD)*0.2;
 		}
 		else
 		{
@@ -210,7 +243,7 @@ int main()
 	Animation sPlayer_go(t1, 0, 40, 40, 40, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
 
-
+   
 	std::list<Entity*> entities;
 
 	for (int i = 0; i<15; i++)
@@ -244,8 +277,14 @@ int main()
 
 		if (Keyboard::isKeyPressed(Keyboard::Right)) p->angle += 3;
 		if (Keyboard::isKeyPressed(Keyboard::Left))  p->angle -= 3;
-		if (Keyboard::isKeyPressed(Keyboard::Up)) p->thrust = true;
-		else p->thrust = false;
+		if (Keyboard::isKeyPressed(Keyboard::W)) p->thrustU = true;
+		else p->thrustU = false;
+		if (Keyboard::isKeyPressed(Keyboard::S)) p->thrustD = true;
+		else p->thrustD = false;
+		if (Keyboard::isKeyPressed(Keyboard::A)) p->thrustL = true;
+		else p->thrustL = false;
+		if (Keyboard::isKeyPressed(Keyboard::D)) p->thrustR = true;
+		else p->thrustR = false;
 
 
 
@@ -290,7 +329,7 @@ int main()
 			}
 
 
-		if (p->thrust)  p->anim = sPlayer_go;
+		if (p->thrustU)  p->anim = sPlayer_go;
 		else   p->anim = sPlayer;
 
 

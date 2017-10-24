@@ -3,7 +3,10 @@
 #include <list>
 
 using namespace sf;
+int playerXpos, playerYpos;//player location
+double mouseXpos, mouseYpos, mouseAngle;//mouse location
 
+int gameMode = 1;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
 const int W = 1200;
 const int H = 800;
 const float PI = 3.14159265;
@@ -104,8 +107,44 @@ public:
 
 	void  update()
 	{
-		x += dx;
-		y += dy;
+		switch (gameMode)
+		{
+		case 0: {x += dx; y += dy; };// Orignal
+		case 1:
+		{
+			if (x<playerXpos)
+			{
+				x += 1;
+			}
+			else
+			{
+				x -= 1;
+			}
+			if (y<playerYpos)
+			{
+				y += 1;
+			}
+			else
+			{
+				y -= 1;
+			}
+		};//Enemies follow you
+		case 2: {};
+		case 3: {};
+		case 4: {};
+		case 5: {};
+		case 6: {};
+		case 7: {};
+		case 8: {};
+		case 9: {};
+		default:
+		{
+			//x += dx;
+			//y += dy;
+		}
+		}
+		//x += dx;
+		//y += dy;
 
 		if (x>W) x = 0;  if (x<0) x = W;
 		if (y>H) y = 0;  if (y<0) y = H;
@@ -140,8 +179,7 @@ public:
 class player : public Entity
 {
 public:
-	bool thrustU,thrustD,thrustL,thrustR;
-
+	bool thrustU, thrustD, thrustL, thrustR;
 	player()
 	{
 		name = "player";
@@ -210,6 +248,8 @@ public:
 
 		if (x>W) x = 0; if (x<0) x = W;
 		if (y>H) y = 0; if (y<0) y = H;
+		playerXpos = x;
+		playerYpos = y;
 	}
 
 };
@@ -226,7 +266,7 @@ bool isCollide(Entity *a, Entity *b)
 int main()
 {
 
-	double mouseXpos, mouseYpos, mouseAngle;
+
 	sf::Vector2f curPos;
 
 	srand(time(0));
@@ -267,7 +307,7 @@ int main()
 	Animation sPlayer_go(t1, 0, 40, 40, 40, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
 
-   
+
 	std::list<Entity*> entities;
 
 	for (int i = 0; i<15; i++)
@@ -414,7 +454,4 @@ int main()
 	}
 
 	return 0;
-}
-
-void updateMouseAngle(sf::Vector2i mouseData) { 
 }

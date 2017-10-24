@@ -1,12 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include <time.h>
 #include <list>
+
 using namespace sf;
 
 const int W = 1200;
 const int H = 800;
-
-double mouseXpos, mouseYpos, mouseAngle;
+const float PI = 3.14159265;
 float DEGTORAD = 0.017453f;//This commend was modified in the new branch again 2
 void updateMouseAngle(sf::Vector2i); // This is for making Player point towards Mouse
 
@@ -221,10 +221,25 @@ bool isCollide(Entity *a, Entity *b)
 
 int main()
 {
-	srand(time(0));
 
-	RenderWindow app(VideoMode(W, H), "Asteroids!");
+	double mouseXpos, mouseYpos, mouseAngle;
+	sf::Vector2f curPos;
+
+	srand(time(0));
+	// Load the font from a file
+	sf::Font MyFont;
+	if (!MyFont.loadFromFile("/fonts/verdana.ttf"))
+	{
+		// Error...
+	}
+	//sf::String Log;
+	//Log = "Hello";
+	//Log
+	//Log.setSize(50);
+
+	RenderWindow app(VideoMode(W, H), "The third return of the legend!");
 	app.setFramerateLimit(60);
+
 
 	Texture t1, t2, t3, t4, t5, t6, t7;
 	t1.loadFromFile("images/spaceship.png");
@@ -253,9 +268,9 @@ int main()
 
 	for (int i = 0; i<15; i++)
 	{
-		//asteroid *a = new asteroid();
-		//a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
-		//entities.push_back(a);
+		asteroid *a = new asteroid();
+		a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
+		entities.push_back(a);
 	}
 
 	player *p = new player();
@@ -272,7 +287,7 @@ int main()
 				app.close();
 
 			if (event.type == Event::KeyPressed)
-				if (event.key.code == Keyboard::Space)
+				if (event.key.code == Mouse::Left)
 				{
 					bullet *b = new bullet();
 					b->settings(sBullet, p->x, p->y, p->angle, 10);
@@ -282,17 +297,27 @@ int main()
 
 		//Angle Update
 		// This is for making Player point towards Mouse
-	double dX =  Mouse::getPosition().x; // x and y are global Varibales declared outside
-	double dY =  Mouse::getPosition().y;
-	double magnitude = sqrt((dX*dX) - (dY*dY));
-	double normalizedX = dX / magnitude;
-	double normalizedY = dY / magnitude;
-	//Updating the angle
-	double mouseAngle = (atan2(dY, dX)) * 180 / 3.14;
+		//	double dX =  Mouse::getPosition().x; // x and y are global Varibales declared outside
+		//	double dY =  Mouse::getPosition().y;
+		////	double magnitude = sqrt((dX*dX) - (dY*dY));
+		//	double normalizedX = dX / magnitude;
+		//	double normalizedY = dY / magnitude;
+		//	Updating the angle
+		//	double mouseAngle = (atan2(dY, dX)) * 180 / 3.14;
 		//updateMouseAngle(Mouse::getPosition());
-		p->angle = -mouseAngle;
-		//if (Keyboard::isKeyPressed(Keyboard::Right)) p->angle += 3;
-		//if (Keyboard::isKeyPressed(Keyboard::Left))  p->angle -= 3;
+		curPos.x = p->x;//player.getShape().getGlobalBounds().left;
+		curPos.y = p->y;//player.getShape().getGlobalBounds().top;
+		sf::Vector2i position = sf::Mouse::getPosition(app);
+		position = sf::Vector2i(app.mapPixelToCoords(position));
+		float dx = curPos.x - position.x;
+		float dy = curPos.y - position.y;
+		float rotation = (atan2(dy, dx)) * 180 / PI;
+		p->angle = rotation + 180;
+
+
+		//p->angle = -mouseAngle;
+		//if (Keyboard::isKeyPressed(Keyboard::Right)) p->angle = 30;
+		//if (Keyboard::isKeyPressed(Keyboard::Left))  p->angle = 90;
 
 		//Location Update
 		if (Keyboard::isKeyPressed(Keyboard::W)) p->thrustU = true;

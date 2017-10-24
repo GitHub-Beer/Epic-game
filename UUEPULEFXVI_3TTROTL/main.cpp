@@ -6,7 +6,7 @@ using namespace sf;
 const int W = 1200;
 const int H = 800;
 
-float DEGTORAD = 0.017453f;//This commend was modified in the new branch
+float DEGTORAD = 0.017453f;//This commend was modified in the new branch again 2
 
 class Animation
 {

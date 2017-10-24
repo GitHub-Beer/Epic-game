@@ -6,7 +6,7 @@ using namespace sf;
 const int W = 1200;
 const int H = 800;
 
-float DEGTORAD = 0.017453f;
+float DEGTORAD = 0.017453f;//com
 
 class Animation
 {

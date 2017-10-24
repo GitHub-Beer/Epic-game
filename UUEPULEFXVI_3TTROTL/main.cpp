@@ -151,8 +151,9 @@ public:
 	{
 		if (thrustU)
 		{
-			dx += cos(angle*DEGTORAD)*0.2;
-			dy += sin(angle*DEGTORAD)*0.2;
+			//dx += cos(angle*DEGTORAD)*0.2;
+			//dy += sin(angle*DEGTORAD)*0.2;
+			dy -= 0.099;
 		}
 		else
 		{
@@ -162,8 +163,9 @@ public:
 
 		if (thrustD)
 		{
-			dx -= cos(angle*DEGTORAD)*0.2;
-			dy -= sin(angle*DEGTORAD)*0.2;
+			//dx -= cos(angle*DEGTORAD)*0.2;
+			//dy -= sin(angle*DEGTORAD)*0.2;
+			dy += 0.099;
 		}
 		else
 		{
@@ -173,8 +175,9 @@ public:
 
 		if (thrustL)
 		{
-			dx += -sin(angle*DEGTORAD)*0.2;
-			dy += -cos(angle*DEGTORAD)*0.2;
+			//dx += sin(angle*DEGTORAD)*0.2;
+			//dy += cos(angle*DEGTORAD)*0.2;
+			dx -= 0.099;
 		}
 		else
 		{
@@ -184,8 +187,9 @@ public:
 
 		if (thrustR)
 		{
-			dx += sin(angle*DEGTORAD)*0.2;
-			dy += cos(angle*DEGTORAD)*0.2;
+			//dx += sin(angle*DEGTORAD)*0.2;
+			//dy += cos(angle*DEGTORAD)*0.2;
+			dx += 0.099;
 		}
 		else
 		{
@@ -286,7 +290,7 @@ int main()
 			if (event.type == Event::Closed)
 				app.close();
 
-			if (event.type == Event::KeyPressed)
+			if (event.type == Event::MouseButtonPressed)
 				if (event.key.code == Mouse::Left)
 				{
 					bullet *b = new bullet();

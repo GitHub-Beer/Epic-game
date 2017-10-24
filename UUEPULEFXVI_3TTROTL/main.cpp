@@ -6,7 +6,10 @@ using namespace sf;
 const int W = 1200;
 const int H = 800;
 
+double mouseXpos, mouseYpos, mouseAngle;
 float DEGTORAD = 0.017453f;//This commend was modified in the new branch again 2
+void updateMouseAngle(sf::Vector2i); // This is for making Player point towards Mouse
+
 
 class Animation
 {
@@ -59,6 +62,8 @@ public:
 	{
 		life = 1;
 	}
+
+
 
 	void settings(Animation &a, int X, int Y, float Angle = 0, int radius = 1)
 	{
@@ -248,9 +253,9 @@ int main()
 
 	for (int i = 0; i<15; i++)
 	{
-		asteroid *a = new asteroid();
-		a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
-		entities.push_back(a);
+		//asteroid *a = new asteroid();
+		//a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
+		//entities.push_back(a);
 	}
 
 	player *p = new player();
@@ -275,8 +280,21 @@ int main()
 				}
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::Right)) p->angle += 3;
-		if (Keyboard::isKeyPressed(Keyboard::Left))  p->angle -= 3;
+		//Angle Update
+		// This is for making Player point towards Mouse
+	double dX =  Mouse::getPosition().x; // x and y are global Varibales declared outside
+	double dY =  Mouse::getPosition().y;
+	double magnitude = sqrt((dX*dX) - (dY*dY));
+	double normalizedX = dX / magnitude;
+	double normalizedY = dY / magnitude;
+	//Updating the angle
+	double mouseAngle = (atan2(dY, dX)) * 180 / 3.14;
+		//updateMouseAngle(Mouse::getPosition());
+		p->angle = -mouseAngle;
+		//if (Keyboard::isKeyPressed(Keyboard::Right)) p->angle += 3;
+		//if (Keyboard::isKeyPressed(Keyboard::Left))  p->angle -= 3;
+
+		//Location Update
 		if (Keyboard::isKeyPressed(Keyboard::W)) p->thrustU = true;
 		else p->thrustU = false;
 		if (Keyboard::isKeyPressed(Keyboard::S)) p->thrustD = true;
@@ -367,4 +385,7 @@ int main()
 	}
 
 	return 0;
+}
+
+void updateMouseAngle(sf::Vector2i mouseData) { 
 }

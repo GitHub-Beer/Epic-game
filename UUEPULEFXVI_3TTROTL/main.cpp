@@ -41,7 +41,7 @@ public:
 	void update()
 	{
 		Frame += speed;
-		int n = frames.size();
+	int n = frames.size();
 		if (Frame >= n) Frame -= n;
 		if (n>0) sprite.setTextureRect(frames[int(Frame)]);
 	}
@@ -61,6 +61,7 @@ public:
 	bool life;
 	std::string name;
 	Animation anim;
+	Animation extra;
 
 	Entity()
 	{
@@ -69,12 +70,13 @@ public:
 
 
 
-	void settings(Animation &a, int X, int Y, float Angle = 0, int radius = 1)
+	void settings(Animation &a, int X, int Y,float Angle = 0, int radius = 1)
 	{
 		anim = a;
 		x = X; y = Y;
 		angle = Angle;
 		R = radius;
+		extra = extra;
 	}
 
 	virtual void update() {};
@@ -82,8 +84,12 @@ public:
 	void draw(RenderWindow &app)
 	{
 		anim.sprite.setPosition(x, y);
+		extra.sprite.setPosition(x, y);
 		anim.sprite.setRotation(angle + 90);
+		extra.sprite.setRotation(angle + 90);
 		app.draw(anim.sprite);
+		app.draw(extra.sprite);
+
 
 		CircleShape circle(R);
 		circle.setFillColor(Color(255, 0, 0, 170));
@@ -94,6 +100,7 @@ public:
 
 	virtual ~Entity() {};
 };
+
 
 
 class asteroid : public Entity
@@ -185,7 +192,72 @@ public:
 	}
 
 };
-
+//class leg : public Entity
+//{
+//public:
+//	bool thrustU, thrustD, thrustL, thrustR;
+//	leg()
+//	{
+//		name = "leg";
+//		angle = 0;
+//	}
+//
+//	void update()
+//	{
+//		if (thrustU)
+//		{
+//			//dx += cos(angle*DEGTORAD)*0.2;
+//			//dy += sin(angle*DEGTORAD)*0.2;
+//			
+//			angle = 0;
+//		}
+//		else
+//		{
+//			dx *= 0.99;
+//			dy *= 0.99;
+//			angle = 0;
+//		}
+//
+//		if (thrustD)
+//		{
+//			
+//			angle = 180;
+//		}
+//		else
+//		{
+//			
+//			angle = 0;
+//		}
+//
+//		if (thrustL)
+//		{
+//			
+//			angle = -90;
+//		}
+//		else
+//		{
+//			angle = 0;
+//		}
+//
+//		if (thrustR)
+//		{
+//			
+//			angle = 90;
+//		}
+//		else
+//		{
+//			
+//			angle = 0;
+//		}
+//
+//		
+//
+//		
+//		playerXpos = x;
+//		playerYpos = y;
+//	}
+//
+//};
 
 class player : public Entity
 {
@@ -194,6 +266,7 @@ public:
 	player()
 	{
 		name = "player";
+		//angle = 0;
 	}
 
 	void update()
@@ -203,11 +276,13 @@ public:
 			//dx += cos(angle*DEGTORAD)*0.2;
 			//dy += sin(angle*DEGTORAD)*0.2;
 			dy -= 0.099;
+			//angle = 0;
 		}
 		else
 		{
 			dx *= 0.99;
 			dy *= 0.99;
+			//angle = 0;
 		}
 
 		if (thrustD)
@@ -215,11 +290,13 @@ public:
 			//dx -= cos(angle*DEGTORAD)*0.2;
 			//dy -= sin(angle*DEGTORAD)*0.2;
 			dy += 0.099;
+			//angle = 180;
 		}
 		else
 		{
 			dx *= 0.99;
 			dy *= 0.99;
+			//angle = 0;
 		}
 
 		if (thrustL)
@@ -227,11 +304,13 @@ public:
 			//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
 			dx -= 0.099;
+			//angle = -90;
 		}
 		else
 		{
 			dx *= 0.99;
 			dy *= 0.99;
+			//angle = 0;
 		}
 
 		if (thrustR)
@@ -239,11 +318,13 @@ public:
 			//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
 			dx += 0.099;
+			//angle = 90;
 		}
 		else
 		{
 			dx *= 0.99;
 			dy *= 0.99;
+			//angle = 0;
 		}
 
 		int maxSpeed = 15;
@@ -344,8 +425,11 @@ int main()
 	}
 
 	player *p = new player();
+	//leg *l = new leg();
 	p->settings(sPlayer, 200, 200, 0, 20);
+	//l->settings(sLeg, 200, 200,l->angle, 20);
 	entities.push_back(p);
+	//entities.push_back(l);
 
 	/////main loop/////
 	while (app.isOpen())
@@ -442,8 +526,27 @@ int main()
 			}
 
 
-		if (p->thrustU)  p->anim = sPlayer_go;
+		if (p->thrustU) {
+			p->anim = sLeg;
+			p->extra = sPlayer;
+		}
 		else   p->anim = sPlayer;
+		if (p->thrustD) {
+			p->anim = sLeg;
+			p->extra = sPlayer;
+		}
+		else   p->anim = sPlayer;
+		if (p->thrustL) {
+			p->anim = sLeg;
+			p->extra = sPlayer;
+		}
+		else   p->anim = sPlayer;
+		if (p->thrustR) {
+			p->anim = sLeg;
+			p->extra = sPlayer;
+		}
+		else   p->anim = sPlayer;
+
 
 
 		for (auto e : entities)
@@ -466,6 +569,7 @@ int main()
 
 			e->update();
 			e->anim.update();
+			e->extra.update();
 
 			if (e->life == false) { i = entities.erase(i); delete e; }
 			else i++;

@@ -111,7 +111,8 @@ public:
 		dx = rand() % 8 - 4;
 		dy = rand() % 8 - 4;
 		name = "asteroid"; \
-		angle = getAngle();
+
+			angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
 	}
 
 	void  update()
@@ -144,7 +145,26 @@ public:
 		};//Enemies follow you
 		case 2: {};
 		case 3: {};
-		case 4: {};
+		case 4: {
+			if (x<playerXpos)
+			{
+				x += 1;
+				angle= atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+			}
+			else
+			{
+				x -= 1;
+			}
+			if (y<playerYpos)
+			{
+				y += 1;
+				angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+			}
+			else
+			{
+				y -= 1;
+			}
+		};//Enemies follow you;
 		case 5: {};
 		case 6: {};
 		case 7: {};
@@ -161,12 +181,12 @@ public:
 
 		if (x>W) x = 0;  if (x<0) x = W;
 		if (y>H) y = 0;  if (y<0) y = H;
-	}
-	float getAngle() {
-		float Get=0;
-		Get= atan2(playerXpos-x,y-playerYpos) * 180 / 3.14+180;
-		return Get;
-	}
+
+	
+			
+
+
+
 
 };
 
@@ -391,7 +411,9 @@ int main()
 	//		}
 	//
 	//}
+
 	Texture t1, t2, t3, t4, t5, t6, t7,t8;
+
 	t1.loadFromFile("images/Player_top.png");
 	t2.loadFromFile("images/background.png");
 	t3.loadFromFile("images/explosions/enemy_die.png");
@@ -413,11 +435,13 @@ int main()
 	Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
 	Animation sPlayer_go(t1, 0, 0, 57, 99, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
-	Animation sLeg(t8,0,0,45,120,7,0.2);
+
+	Animation sLeg(t8, 0, 0, 45, 120, 7, 0.2);
+
 
 	std::list<Entity*> entities;
 
-	for (int i = 0; i<15; i++)
+	for (int i = 0; i < 15; i++)
 	{
 		asteroid *a = new asteroid();
 		a->settings(sRock, rand() % W, rand() % H, a->angle, 25);
@@ -502,10 +526,17 @@ int main()
 
 						/*for (int i = 0; i<2; i++)
 						{
+
 							if (a->R == 15) continue;
 							Entity *e = new asteroid();
 							e->settings(sRock_small, a->x, a->y, rand() % 360, 15);
 							entities.push_back(e);
+
+						if (a->R == 15) continue;
+						Entity *e = new asteroid();
+						e->settings(sRock_small, a->x, a->y, rand() % 360, 15);
+						entities.push_back(e);
+
 						}*/
 
 					}
@@ -556,9 +587,11 @@ int main()
 		if (rand() % 150 == 0)
 		{
 			asteroid *a = new asteroid();
+
 		
 			a->settings(sRock, W, H, a->angle, 25);
 		/*	a->settings(sRock, 0, rand() % H, rand() % 360, 25);*/
+
 
 			entities.push_back(a);
 		}
@@ -569,22 +602,12 @@ int main()
 
 			e->update();
 			e->anim.update();
+
 			e->extra.update();
 
 			if (e->life == false) { i = entities.erase(i); delete e; }
 			else i++;
+
 		}
-
-
-
-		//////draw//////
-		app.draw(background);
-
-		for (auto i : entities)
-			i->draw(app);
-
-		app.display();
 	}
-
-	return 0;
 }

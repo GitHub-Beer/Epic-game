@@ -3,12 +3,16 @@
 #include <list>
 
 using namespace sf;
+int playerXpos, playerYpos;//player location
+double mouseXpos, mouseYpos, mouseAngle;//mouse location
 
+int gameMode = 1;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
 const int W = 1200;
 const int H = 800;
 const float PI = 3.14159265;
 float DEGTORAD = 0.017453f;//This commend was modified in the new branch again 2
 void updateMouseAngle(sf::Vector2i); // This is for making Player point towards Mouse
+
 
 
 class Animation
@@ -92,20 +96,79 @@ public:
 };
 
 
-class asteroid : public Entity
+class zombie : public Entity
 {
 public:
-	asteroid()
+	zombie()
 	{
 		dx = rand() % 8 - 4;
 		dy = rand() % 8 - 4;
-		name = "asteroid";
+		name = "zombie"; \
+		//angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
 	}
 
 	void  update()
 	{
-		x += dx;
-		y += dy;
+		switch (gameMode)
+		{
+		case 0: {x += dx; y += dy; };// Orignal
+		case 1:
+		{
+			if (x<playerXpos)
+			{
+				x += 1;
+				angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+			}
+			else
+			{
+				x -= 1;
+				angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+			}
+			if (y<playerYpos)
+			{
+				y += 1;
+				angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+			}
+			else
+			{
+				y -= 1;
+				angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+			}
+		};//Enemies follow you
+		case 2:
+		{
+			if (x<playerXpos)
+			{
+				x += 1;
+			}
+			else
+			{
+				x -= 1;
+			}
+			if (y<playerYpos)
+			{
+				y += 1;
+			}
+			else
+			{
+				y -= 1;
+			}
+		};//Enemies follow you but not facing you
+		case 3: {};
+		case 4: {};
+		case 5: {};
+		case 6: {};
+		case 7: {};
+		case 8: {};
+		case 9: {};
+		default:
+		{
+			//x += dx;
+			//y += dy;
+		}
+		}
+		//x += dx;
+		//y += dy;
 
 		if (x>W) x = 0;  if (x<0) x = W;
 		if (y>H) y = 0;  if (y<0) y = H;
@@ -140,57 +203,69 @@ public:
 class player : public Entity
 {
 public:
-	bool thrustU,thrustD,thrustL,thrustR;
-
+	bool thrustU, thrustD, thrustL, thrustR;
 	player()
 	{
 		name = "player";
+		//angle = 0;
 	}
 
 	void update()
 	{
 		if (thrustU)
 		{
-			dx += cos(angle*DEGTORAD)*0.2;
-			dy += sin(angle*DEGTORAD)*0.2;
+			//dx += cos(angle*DEGTORAD)*0.2;
+			//dy += sin(angle*DEGTORAD)*0.2;
+			dy -= 0.099;
+			//angle = 0;
 		}
 		else
 		{
 			dx *= 0.99;
 			dy *= 0.99;
+			//angle = 0;
 		}
 
 		if (thrustD)
 		{
-			dx -= cos(angle*DEGTORAD)*0.2;
-			dy -= sin(angle*DEGTORAD)*0.2;
+			//dx -= cos(angle*DEGTORAD)*0.2;
+			//dy -= sin(angle*DEGTORAD)*0.2;
+			dy += 0.099;
+			//angle = 180;
 		}
 		else
 		{
 			dx *= 0.99;
 			dy *= 0.99;
+			//angle = 0;
 		}
 
 		if (thrustL)
 		{
-			dx += -sin(angle*DEGTORAD)*0.2;
-			dy += -cos(angle*DEGTORAD)*0.2;
+			//dx += sin(angle*DEGTORAD)*0.2;
+			//dy += cos(angle*DEGTORAD)*0.2;
+			dx -= 0.099;
+			//angle = -90;
 		}
 		else
 		{
 			dx *= 0.99;
 			dy *= 0.99;
+			//angle = 0;
 		}
 
 		if (thrustR)
 		{
-			dx += sin(angle*DEGTORAD)*0.2;
-			dy += cos(angle*DEGTORAD)*0.2;
+			//dx += sin(angle*DEGTORAD)*0.2;
+			//dy += cos(angle*DEGTORAD)*0.2;
+			dx += 0.099;
+			//angle = 90;
 		}
 		else
 		{
 			dx *= 0.99;
 			dy *= 0.99;
+			//angle = 0;
 		}
 
 		int maxSpeed = 15;
@@ -206,6 +281,8 @@ public:
 
 		if (x>W) x = 0; if (x<0) x = W;
 		if (y>H) y = 0; if (y<0) y = H;
+		playerXpos = x;
+		playerYpos = y;
 	}
 
 };
@@ -241,35 +318,39 @@ int main()
 	app.setFramerateLimit(60);
 
 
-	Texture t1, t2, t3, t4, t5, t6, t7;
-	t1.loadFromFile("images/spaceship.png");
-	t2.loadFromFile("images/background.jpg");
-	t3.loadFromFile("images/explosions/type_C.png");
-	t4.loadFromFile("images/rock.png");
+	Texture t1, t2, t3, t4, t5, t6, t7, t8;
+	t1.loadFromFile("images/Player_top.png");
+	t2.loadFromFile("images/background.png");
+	t3.loadFromFile("images/explosions/enemy_die.png");
+	t4.loadFromFile("images/enemy_move.png");
 	t5.loadFromFile("images/fire_blue.png");
 	t6.loadFromFile("images/rock_small.png");
 	t7.loadFromFile("images/explosions/type_B.png");
+	t8.loadFromFile("images/LEG_ANIM.png");
 
 	t1.setSmooth(true);
 	t2.setSmooth(true);
 
 	Sprite background(t2);
 
-	Animation sExplosion(t3, 0, 0, 256, 256, 48, 0.5);
-	Animation sRock(t4, 0, 0, 64, 64, 16, 0.2);
+	Animation sExplosion(t3, 0, 0, 120.5, 73, 6, 0.1);
+	Animation sRock(t4, 0, 0, 120.5, 53, 6, 0.1);
 	Animation sRock_small(t6, 0, 0, 64, 64, 16, 0.2);
 	Animation sBullet(t5, 0, 0, 32, 64, 16, 0.8);
-	Animation sPlayer(t1, 0, 0, 40, 40, 1, 0);
-	Animation sPlayer_go(t1, 0, 40, 40, 40, 1, 0);
+	Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
+	Animation sPlayer_go(t1, 0, 0, 57, 99, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
+	Animation sLeg(t8, 0, 0, 45, 120, 7, 0.2);
 
    
 	std::list<Entity*> entities;
 
 	for (int i = 0; i<15; i++)
 	{
-		asteroid *a = new asteroid();
-		a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
+		zombie *a = new zombie();
+		//a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);//Zombie spawining
+		a->settings(sRock, rand() % W, rand() % H, a->angle, 25);
+		/*	a->settings(sRock, 0, rand() % H, rand() % 360, 25);*/
 		entities.push_back(a);
 	}
 
@@ -286,7 +367,7 @@ int main()
 			if (event.type == Event::Closed)
 				app.close();
 
-			if (event.type == Event::KeyPressed)
+			if (event.type == Event::MouseButtonPressed)
 				if (event.key.code == Mouse::Left)
 				{
 					bullet *b = new bullet();
@@ -328,35 +409,46 @@ int main()
 		else p->thrustL = false;
 		if (Keyboard::isKeyPressed(Keyboard::D)) p->thrustR = true;
 		else p->thrustR = false;
+		if (Keyboard::isKeyPressed(Keyboard::Num0)) gameMode = 0;
+		if (Keyboard::isKeyPressed(Keyboard::Num1)) gameMode = 1;
+		if (Keyboard::isKeyPressed(Keyboard::Num2)) gameMode = 2;
+		if (Keyboard::isKeyPressed(Keyboard::Num3)) gameMode = 3;
+		if (Keyboard::isKeyPressed(Keyboard::Num4)) gameMode = 4;
+		if (Keyboard::isKeyPressed(Keyboard::Num5)) gameMode = 5;
+		if (Keyboard::isKeyPressed(Keyboard::Num6)) gameMode = 6;
+		if (Keyboard::isKeyPressed(Keyboard::Num7)) gameMode = 7;
+		if (Keyboard::isKeyPressed(Keyboard::Num8)) gameMode = 8;
+		if (Keyboard::isKeyPressed(Keyboard::Num9)) gameMode = 9;
+
+
 
 
 
 		for (auto a : entities)
 			for (auto b : entities)
 			{
-				if (a->name == "asteroid" && b->name == "bullet")
+				if (a->name == "zombie" && b->name == "bullet")
 					if (isCollide(a, b))
 					{
 						a->life = false;
 						b->life = false;
 
 						Entity *e = new Entity();
-						e->settings(sExplosion, a->x, a->y);
+						e->settings(sExplosion, a->x, a->y,a->angle);
 						e->name = "explosion";
 						entities.push_back(e);
 
-
-						for (int i = 0; i<2; i++)
+						/*for (int i = 0; i<2; i++)
 						{
 							if (a->R == 15) continue;
-							Entity *e = new asteroid();
+							Entity *e = new zombie();
 							e->settings(sRock_small, a->x, a->y, rand() % 360, 15);
 							entities.push_back(e);
-						}
+						}*/
 
 					}
 
-				if (a->name == "player" && b->name == "asteroid")
+				if (a->name == "player" && b->name == "zombie")
 					if (isCollide(a, b))
 					{
 						b->life = false;
@@ -382,8 +474,8 @@ int main()
 
 		if (rand() % 150 == 0)
 		{
-			asteroid *a = new asteroid();
-			a->settings(sRock, 0, rand() % H, rand() % 360, 25);
+			zombie *a = new zombie();
+			a->settings(sRock, rand()%W, rand() % H, rand() % 360, 25);
 			entities.push_back(a);
 		}
 

@@ -352,7 +352,7 @@ int main()
 
 	std::list<Entity*> entities;
 
-	for (int i = 0; i<15; i++)
+	for (int i = 0; i < 15; i++)
 	{
 		asteroid *a = new asteroid();
 		a->settings(sRock, rand() % W, rand() % H, a->angle, 25);
@@ -482,21 +482,6 @@ int main()
 
 			e->update();
 			e->anim.update();
-
-			if (e->life == false) { i = entities.erase(i); delete e; }
-			else i++;
 		}
-
-
-
-		//////draw//////
-		app.draw(background);
-
-		for (auto i : entities)
-			i->draw(app);
-
-		app.display();
 	}
-
-	return 0;
 }

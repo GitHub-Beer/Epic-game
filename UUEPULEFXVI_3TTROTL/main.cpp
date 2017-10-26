@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
-#include <time.h>
+#include <ctime>
+
 #include <list>
 
 using namespace sf;
@@ -102,7 +103,8 @@ public:
 	{
 		dx = rand() % 8 - 4;
 		dy = rand() % 8 - 4;
-		name = "asteroid";
+		name = "asteroid"; \
+		angle = getAngle();
 	}
 
 	void  update()
@@ -115,18 +117,22 @@ public:
 			if (x<playerXpos)
 			{
 				x += 1;
+				angle=getAngle();
 			}
 			else
 			{
 				x -= 1;
+				angle = getAngle();
 			}
 			if (y<playerYpos)
 			{
 				y += 1;
+				angle = getAngle();
 			}
 			else
 			{
 				y -= 1;
+				angle = getAngle();
 			}
 		};//Enemies follow you
 		case 2: {};
@@ -148,6 +154,11 @@ public:
 
 		if (x>W) x = 0;  if (x<0) x = W;
 		if (y>H) y = 0;  if (y<0) y = H;
+	}
+	float getAngle() {
+		float Get=0;
+		Get= atan2(playerXpos-x,y-playerYpos) * 180 / 3.14+180;
+		return Get;
 	}
 
 };
@@ -284,36 +295,51 @@ int main()
 	RenderWindow app(VideoMode(W, H), "The third return of the legend!");
 	app.setFramerateLimit(60);
 
-
-	Texture t1, t2, t3, t4, t5, t6, t7;
-	t1.loadFromFile("images/spaceship.png");
-	t2.loadFromFile("images/background.jpg");
-	t3.loadFromFile("images/explosions/type_C.png");
-	t4.loadFromFile("images/rock.png");
+	//Textures
+	//Texture MakeBackground() 
+	//{
+	//	Texture BG, BUSH, STONE;
+	//	BG.loadFromFile("images/bg/grass.png")
+	////for every x
+	//	int x, y,type;
+	//	type = 3;
+	//	x_size=Xsize/BackgroundX
+	//		for (x = 0, x < (Xsize / BackgroundX), x++) {
+	//		
+	//		
+	//		}
+	//
+	//}
+	Texture t1, t2, t3, t4, t5, t6, t7,t8;
+	t1.loadFromFile("images/Player_top.png");
+	t2.loadFromFile("images/background.png");
+	t3.loadFromFile("images/explosions/enemy_die.png");
+	t4.loadFromFile("images/enemy_move.png");
 	t5.loadFromFile("images/fire_blue.png");
 	t6.loadFromFile("images/rock_small.png");
 	t7.loadFromFile("images/explosions/type_B.png");
+	t8.loadFromFile("images/LEG_ANIM.png");
 
 	t1.setSmooth(true);
 	t2.setSmooth(true);
 
 	Sprite background(t2);
 
-	Animation sExplosion(t3, 0, 0, 256, 256, 48, 0.5);
-	Animation sRock(t4, 0, 0, 64, 64, 16, 0.2);
+	Animation sExplosion(t3, 0, 0, 120, 73, 6, 0.1);
+	Animation sRock(t4, 0, 0, 120, 53, 6, 0.1);
 	Animation sRock_small(t6, 0, 0, 64, 64, 16, 0.2);
 	Animation sBullet(t5, 0, 0, 32, 64, 16, 0.8);
-	Animation sPlayer(t1, 0, 0, 40, 40, 1, 0);
-	Animation sPlayer_go(t1, 0, 40, 40, 40, 1, 0);
+	Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
+	Animation sPlayer_go(t1, 0, 0, 57, 99, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
-
+	Animation sLeg(t8,0,0,45,120,7,0.2);
 
 	std::list<Entity*> entities;
 
 	for (int i = 0; i<15; i++)
 	{
 		asteroid *a = new asteroid();
-		a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
+		a->settings(sRock, rand() % W, rand() % H, a->angle, 25);
 		entities.push_back(a);
 	}
 
@@ -390,13 +416,13 @@ int main()
 						entities.push_back(e);
 
 
-						for (int i = 0; i<2; i++)
+						/*for (int i = 0; i<2; i++)
 						{
 							if (a->R == 15) continue;
 							Entity *e = new asteroid();
 							e->settings(sRock_small, a->x, a->y, rand() % 360, 15);
 							entities.push_back(e);
-						}
+						}*/
 
 					}
 
@@ -427,7 +453,10 @@ int main()
 		if (rand() % 150 == 0)
 		{
 			asteroid *a = new asteroid();
-			a->settings(sRock, 0, rand() % H, rand() % 360, 25);
+		
+			a->settings(sRock, W, H, a->angle, 25);
+		/*	a->settings(sRock, 0, rand() % H, rand() % 360, 25);*/
+
 			entities.push_back(a);
 		}
 

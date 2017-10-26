@@ -104,7 +104,7 @@ public:
 		dx = rand() % 8 - 4;
 		dy = rand() % 8 - 4;
 		name = "asteroid"; \
-			angle = getAngle();
+			angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
 	}
 
 	void  update()
@@ -131,31 +131,28 @@ public:
 				y -= 1;
 			}
 		};//Enemies follow you
-		case 2:
-		{
+		case 2: {};
+		case 3: {};
+		case 4: {
 			if (x<playerXpos)
 			{
 				x += 1;
-				angle = getAngle();
+				angle= atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
 			}
 			else
 			{
 				x -= 1;
-				angle = getAngle();
 			}
 			if (y<playerYpos)
 			{
 				y += 1;
-				angle = getAngle();
+				angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
 			}
 			else
 			{
 				y -= 1;
-				angle = getAngle();
 			}
-		};//Enemies follow you while looking at you
-		case 3: {};
-		case 4: {};
+		};//Enemies follow you;
 		case 5: {};
 		case 6: {};
 		case 7: {};
@@ -163,8 +160,8 @@ public:
 		case 9: {};
 		default:
 		{
-			x += dx;
-			y += dy;
+			//x += dx;
+			//y += dy;
 		}
 		}
 		//x += dx;
@@ -172,12 +169,13 @@ public:
 
 		if (x>W) x = 0;  if (x<0) x = W;
 		if (y>H) y = 0;  if (y<0) y = H;
-	}
-	float getAngle() {
-		float Get = 0;
-		Get = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
-		return Get;
-	}
+	
+			
+
+
+};
+
+
 
 };
 

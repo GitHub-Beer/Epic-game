@@ -1,0 +1,35 @@
+
+Things to add:
+	-Jumping and rolling feature in player movement
+	-Map generator 
+	(Generates a random map based on Input (Similar to AOE2 where you can choose terrain type but it's still randomly generated)
+		Save Map
+		Load Existing Map
+		Create Map
+	-Levels
+		3-4 Game levels with a main boss in the end
+	-Difficulty
+		Add different modes of difficulty based on user choice
+			Faster Zombies
+			Health levels (100-250%)
+			Zombies that can shoot
+	-Kill Count
+	-Weapons
+		Grenade
+		Revolver
+	-Higher Resolution Support
+	-Sound
+	-Co-op mode
+	-More Characters
+	
+Things to fix:
+	-Bullet Physics
+		Bullets should feel fast and solid
+	-Player Movement
+		The player movement should feel solid and fast
+			Fix Running Animation
+		Add Sprint and Walk Feautre
+	-Zombie Movement
+		Better Sawn timings (based on difficulty)
+		No spawning in the visible area
+		Add AI to zombie movement (avoiding physical objects)

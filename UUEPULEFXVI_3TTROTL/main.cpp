@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <time.h>
+#include <random>
 #include <list>
 
 using namespace sf;
@@ -298,6 +299,9 @@ bool isCollide(Entity *a, Entity *b)
 
 int main()
 {
+	std::random_device rd; // obtain a random number from hardware
+	std::mt19937 eng(rd()); // seed the generator
+
 
 	double mouseXpos, mouseYpos, mouseAngle;
 	sf::Vector2f curPos;
@@ -345,11 +349,48 @@ int main()
    
 	std::list<Entity*> entities;
 
+	int randW , randH;
+
+
+
+
 	for (int i = 0; i<15; i++)
 	{
 		zombie *a = new zombie();
-		//a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);//Zombie spawining
-		a->settings(sRock, rand() % W, rand() % H, a->angle, 25);
+		//a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);//Zombie 
+
+		if (rand() % 2 == 0)//Randomize location 1 Branch : Top/Bot or Left/Right , 2nd Branch , Top, Bot, Left, Right
+		{
+			if (rand() % 2 == 0)
+			{
+				std::uniform_int_distribution<> distr(-200, 0); // define the range
+				randW = distr(eng);
+				randH = rand() % H;
+			}
+			else
+			{
+				std::uniform_int_distribution<> distr(W, W + 200); // define the range
+				randW = distr(eng);
+				randH = rand() % H;
+			}
+		}
+		else
+		{
+			if (rand() % 2 == 0)
+			{
+				std::uniform_int_distribution<> distr(-200, 0); // define the range
+				randH = distr(eng);
+				randW = rand() % W;
+			}
+			else
+			{
+				std::uniform_int_distribution<> distr(H, H + 200); // define the range
+				randH = distr(eng);
+				randW = rand() % W;
+			}
+		}
+
+		a->settings(sRock, randW, randH, a->angle, 25);
 		/*	a->settings(sRock, 0, rand() % H, rand() % 360, 25);*/
 		entities.push_back(a);
 	}
@@ -474,8 +515,38 @@ int main()
 
 		if (rand() % 150 == 0)
 		{
+			if (rand() % 2 == 0)//Randomize location 1 Branch : Top/Bot or Left/Right , 2nd Branch , Top, Bot, Left, Right
+			{
+				if (rand() % 2 == 0)
+				{
+					std::uniform_int_distribution<> distr(-200, 0); // define the range
+					randW = distr(eng);
+					randH = rand() % H;
+				}
+				else
+				{
+					std::uniform_int_distribution<> distr(W, W + 200); // define the range
+					randW = distr(eng);
+					randH = rand() % H;
+				}
+			}
+			else
+			{
+				if (rand() % 2 == 0)
+				{
+					std::uniform_int_distribution<> distr(-200, 0); // define the range
+					randH = distr(eng);
+					randW = rand() % W;
+				}
+				else
+				{
+					std::uniform_int_distribution<> distr(H, H + 200); // define the range
+					randH = distr(eng);
+					randW = rand() % W;
+				}
+			}
 			zombie *a = new zombie();
-			a->settings(sRock, rand()%W, rand() % H, rand() % 360, 25);
+			a->settings(sRock, randW, randH, rand() % 360, 25);
 			entities.push_back(a);
 		}
 

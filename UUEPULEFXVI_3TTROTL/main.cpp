@@ -235,7 +235,8 @@ public:
 class player : public Entity
 {
 public:
-	bool thrustU, thrustD, thrustL, thrustR;
+	bool thrustU, thrustD, thrustL, thrustR,sprint;
+	float sprintValue = 2;
 	player()
 	{
 		name = "player";
@@ -248,7 +249,16 @@ public:
 		{
 			//dx += cos(angle*DEGTORAD)*0.2;
 			//dy += sin(angle*DEGTORAD)*0.2;
-			dy -= 0.099;
+			if (sprint)
+			{
+				dy -= 0.099 + sprintValue;
+
+			}
+			else
+			{
+				dy -= 0.099;
+
+			}
 			//angle = 0;
 		}
 		else
@@ -262,7 +272,15 @@ public:
 		{
 			//dx -= cos(angle*DEGTORAD)*0.2;
 			//dy -= sin(angle*DEGTORAD)*0.2;
-			dy += 0.099;
+			if (sprint)
+			{
+				dy += 0.099 +sprintValue;
+			}
+			else
+			{
+				dy += 0.099;
+
+			}
 			//angle = 180;
 		}
 		else
@@ -276,7 +294,15 @@ public:
 		{
 			//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
-			dx -= 0.099;
+			if (sprint)
+			{
+				dx -= 0.099 +sprintValue;
+			}
+			else
+			{
+				dx -= 0.099;
+
+			}
 			//angle = -90;
 		}
 		else
@@ -290,7 +316,15 @@ public:
 		{
 			//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
-			dx += 0.099;
+			if (sprint)
+			{
+				dx += 0.099 +sprintValue;
+			}
+			else
+			{
+				dx += 0.099;
+
+			}
 			//angle = 90;
 		}
 		else
@@ -299,7 +333,6 @@ public:
 			dy *= 0.99;
 			//angle = 0;
 		}
-
 		int maxSpeed = 15;
 		float speed = sqrt(dx*dx + dy*dy);
 		if (speed>maxSpeed)
@@ -482,6 +515,8 @@ int main()
 		else p->thrustL = false;
 		if (Keyboard::isKeyPressed(Keyboard::D)) p->thrustR = true;
 		else p->thrustR = false;
+		if (Keyboard::isKeyPressed(Keyboard::LShift)) p->sprint = true;
+		else p->sprint = false;
 		if (Keyboard::isKeyPressed(Keyboard::Num0)) gameMode = 0;
 		if (Keyboard::isKeyPressed(Keyboard::Num1)) gameMode = 1;
 		if (Keyboard::isKeyPressed(Keyboard::Num2)) gameMode = 2;

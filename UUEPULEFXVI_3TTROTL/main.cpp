@@ -1,14 +1,23 @@
 #include <SFML/Graphics.hpp>
 #include <time.h>
-#include <random>
 #include <list>
 
 using namespace sf;
 int playerXpos, playerYpos;//player location
 double mouseXpos, mouseYpos, mouseAngle;//mouse location
-bool isTooClose (float,float); //For finiding if another entitiy is close or not
+const int mapH = 50;
+const int mapW = 50;
 
-int gameMode = 3;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
+String Map[mapW][mapH];
+/*tring Map[W*H] = {
+"AAAAAAAAAAAA",
+"BBBBBBBBBBBB",
+"CCCCCCCCCCCC",
+"AAAAAAAAAAAA",
+"AAAAAAAAAAAA",
+
+};*/
+int gameMode = 1;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
 const int W = 1200;
 const int H = 800;
 const float PI = 3.14159265;
@@ -16,7 +25,7 @@ float DEGTORAD = 0.017453f;//This commend was modified in the new branch again 2
 void updateMouseAngle(sf::Vector2i); // This is for making Player point towards Mouse
 
 
-
+									 //asd
 class Animation
 {
 public:
@@ -106,7 +115,7 @@ public:
 		dx = rand() % 8 - 4;
 		dy = rand() % 8 - 4;
 		name = "zombie"; \
-		//angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+			//angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
 	}
 
 	void  update()
@@ -156,37 +165,7 @@ public:
 				y -= 1;
 			}
 		};//Enemies follow you but not facing you
-		case 3:
-		{
-			bool test = isTooClose;
-			if (isTooClose){
-		
-			}
-			else
-			{
-				if (x<playerXpos)
-				{
-					x += 1;
-					angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
-				}
-				else
-				{
-					x -= 1;
-					angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
-				}
-				if (y<playerYpos)
-				{
-					y += 1;
-					angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
-				}
-				else
-				{
-					y -= 1;
-					angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
-				}
-			}
-
-		};//Enemies follow you
+		case 3: {};
 		case 4: {};
 		case 5: {};
 		case 6: {};
@@ -208,7 +187,62 @@ public:
 
 };
 
+/////////////////////////////////////////////
+//MAP GENERATOR///////////////////////////////
+//void generateMap(int mapType) {
+//	int h = 0;
+//	int w = 0;
+//	
+//	switch (mapType)
+//		{
+//	case 1: {
+//		for (h; h < mapH; h++) {
+//			for (w; w < mapW; w++) {
+//				
+//				int x = rand() % 50;
+//				if (x == 1)Map[h][w] =='B';
+//				if (x == 23)Map[h][w] =='A';
+//				else Map[h][w] =='C';
+//				;
+//				
+//			}
+//		}
+//		}
+//	default:
+//		break;
+//	}
+//
 
+//	}
+void generateMap(int mapType) {
+	int x;
+	for (int i = 0; i < mapW; i++)
+	{
+		x = rand() % 70;
+
+		for (int j = 0; j < mapH; j++)
+		{
+			x = rand() % 70;
+
+			if (x == 60) {
+				Map[i][j] = 'A';
+				break;
+			}
+			else
+			{
+				Map[i][j] = ' ';
+
+			}
+			if (x == 26) {
+				Map[i][j] = 'B';
+			}
+			else
+			{
+				Map[i][j] = ' ';
+			}
+		}
+	}
+}
 
 class bullet : public Entity
 {
@@ -235,8 +269,7 @@ public:
 class player : public Entity
 {
 public:
-	bool thrustU, thrustD, thrustL, thrustR,sprint;
-	float sprintValue = 2;
+	bool thrustU, thrustD, thrustL, thrustR;
 	player()
 	{
 		name = "player";
@@ -249,16 +282,7 @@ public:
 		{
 			//dx += cos(angle*DEGTORAD)*0.2;
 			//dy += sin(angle*DEGTORAD)*0.2;
-			if (sprint)
-			{
-				dy -= 0.099 + sprintValue;
-
-			}
-			else
-			{
-				dy -= 0.099;
-
-			}
+			dy -= 0.099;
 			//angle = 0;
 		}
 		else
@@ -272,15 +296,7 @@ public:
 		{
 			//dx -= cos(angle*DEGTORAD)*0.2;
 			//dy -= sin(angle*DEGTORAD)*0.2;
-			if (sprint)
-			{
-				dy += 0.099 +sprintValue;
-			}
-			else
-			{
-				dy += 0.099;
-
-			}
+			dy += 0.099;
 			//angle = 180;
 		}
 		else
@@ -294,15 +310,7 @@ public:
 		{
 			//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
-			if (sprint)
-			{
-				dx -= 0.099 +sprintValue;
-			}
-			else
-			{
-				dx -= 0.099;
-
-			}
+			dx -= 0.099;
 			//angle = -90;
 		}
 		else
@@ -316,15 +324,7 @@ public:
 		{
 			//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
-			if (sprint)
-			{
-				dx += 0.099 +sprintValue;
-			}
-			else
-			{
-				dx += 0.099;
-
-			}
+			dx += 0.099;
 			//angle = 90;
 		}
 		else
@@ -333,6 +333,7 @@ public:
 			dy *= 0.99;
 			//angle = 0;
 		}
+
 		int maxSpeed = 15;
 		float speed = sqrt(dx*dx + dy*dy);
 		if (speed>maxSpeed)
@@ -360,14 +361,9 @@ bool isCollide(Entity *a, Entity *b)
 		(a->R + b->R)*(a->R + b->R);
 }
 
-std::list<Entity*> entities;
-
 
 int main()
 {
-	std::random_device rd; // obtain a random number from hardware
-	std::mt19937 eng(rd()); // seed the generator
-
 
 	double mouseXpos, mouseYpos, mouseAngle;
 	sf::Vector2f curPos;
@@ -388,74 +384,44 @@ int main()
 	app.setFramerateLimit(60);
 
 
-	Texture t1, t2, t3, t4, t5, t6, t7, t8;
+	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9;
 	t1.loadFromFile("images/Player_top.png");
 	t2.loadFromFile("images/background.png");
 	t3.loadFromFile("images/explosions/enemy_die.png");
 	t4.loadFromFile("images/enemy_move.png");
-	t5.loadFromFile("images/fire_blue.png");
+	t5.loadFromFile("images/fire_red.png");
 	t6.loadFromFile("images/rock_small.png");
 	t7.loadFromFile("images/explosions/type_B.png");
-	t8.loadFromFile("images/LEG_ANIM.png");
+	t8.loadFromFile("images/LEG_ANIM1.png");
+	///
+	t9.loadFromFile("images/background/bcg.png");
+
+	Sprite BCG(t9);
+
 
 	t1.setSmooth(true);
 	t2.setSmooth(true);
 
-	Sprite background(t2);
+	//Sprite background(t2);
 
 	Animation sExplosion(t3, 0, 0, 120.5, 73, 6, 0.1);
 	Animation sRock(t4, 0, 0, 120.5, 53, 6, 0.1);
 	Animation sRock_small(t6, 0, 0, 64, 64, 16, 0.2);
 	Animation sBullet(t5, 0, 0, 32, 64, 16, 0.8);
-	Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
+	Animation sPlayer(t8, 53, 0, 53, 120, 6, 0.1);
+	//Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
 	Animation sPlayer_go(t1, 0, 0, 57, 99, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
-	Animation sLeg(t8, 0, 0, 45, 120, 7, 0.2);
-
-   
-
-	int randW , randH;
+	Animation sLeg(t8, 0, 0, 53, 120, 6, 0.1);
 
 
-
+	std::list<Entity*> entities;
 
 	for (int i = 0; i<15; i++)
 	{
 		zombie *a = new zombie();
-		//a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);//Zombie 
-
-		if (rand() % 2 == 0)//Randomize location 1 Branch : Top/Bot or Left/Right , 2nd Branch , Top, Bot, Left, Right
-		{
-			if (rand() % 2 == 0)
-			{
-				std::uniform_int_distribution<> distr(-200, 0); // define the range
-				randW = distr(eng);
-				randH = rand() % H;
-			}
-			else
-			{
-				std::uniform_int_distribution<> distr(W, W + 200); // define the range
-				randW = distr(eng);
-				randH = rand() % H;
-			}
-		}
-		else
-		{
-			if (rand() % 2 == 0)
-			{
-				std::uniform_int_distribution<> distr(-200, 0); // define the range
-				randH = distr(eng);
-				randW = rand() % W;
-			}
-			else
-			{
-				std::uniform_int_distribution<> distr(H, H + 200); // define the range
-				randH = distr(eng);
-				randW = rand() % W;
-			}
-		}
-
-		a->settings(sRock, randW, randH, a->angle, 25);
+		//a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);//Zombie spawining
+		a->settings(sRock, rand() % W, rand() % H, a->angle, 25);
 		/*	a->settings(sRock, 0, rand() % H, rand() % 360, 25);*/
 		entities.push_back(a);
 	}
@@ -464,6 +430,8 @@ int main()
 	p->settings(sPlayer, 200, 200, 0, 20);
 	entities.push_back(p);
 
+	////////////////////////////
+	generateMap(1);
 	/////main loop/////
 	while (app.isOpen())
 	{
@@ -515,8 +483,6 @@ int main()
 		else p->thrustL = false;
 		if (Keyboard::isKeyPressed(Keyboard::D)) p->thrustR = true;
 		else p->thrustR = false;
-		if (Keyboard::isKeyPressed(Keyboard::LShift)) p->sprint = true;
-		else p->sprint = false;
 		if (Keyboard::isKeyPressed(Keyboard::Num0)) gameMode = 0;
 		if (Keyboard::isKeyPressed(Keyboard::Num1)) gameMode = 1;
 		if (Keyboard::isKeyPressed(Keyboard::Num2)) gameMode = 2;
@@ -542,16 +508,16 @@ int main()
 						b->life = false;
 
 						Entity *e = new Entity();
-						e->settings(sExplosion, a->x, a->y,a->angle);
+						e->settings(sExplosion, a->x, a->y, a->angle);
 						e->name = "explosion";
 						entities.push_back(e);
 
 						/*for (int i = 0; i<2; i++)
 						{
-							if (a->R == 15) continue;
-							Entity *e = new zombie();
-							e->settings(sRock_small, a->x, a->y, rand() % 360, 15);
-							entities.push_back(e);
+						if (a->R == 15) continue;
+						Entity *e = new zombie();
+						e->settings(sRock_small, a->x, a->y, rand() % 360, 15);
+						entities.push_back(e);
 						}*/
 
 					}
@@ -569,63 +535,10 @@ int main()
 						p->settings(sPlayer, W / 2, H / 2, 0, 20);
 						p->dx = 0; p->dy = 0;
 					}
-
-				if (a->name == "zombie" && b->name == "zombie")
-					if (isCollide(a, b))
-					{
-
-						if (rand() % 2 == 0)
-						{
-							if (rand() % 2 == 0)//It goes bot left or top right,
-							{
-								a->y -= 1;
-								a->x += 1;
-								a->angle = atan2(playerXpos - a->x, a->y - playerYpos) * 180 / 3.14 + 180;
-
-								b->y -= 1;
-								b->x += 1;
-								b->angle = atan2(playerXpos - b->x, b->y - playerYpos) * 180 / 3.14 + 180;
-							}
-							else
-							{
-								a->y += 1;
-								a->x -= 1;
-								a->angle = atan2(playerXpos - a->x, a->y - playerYpos) * 180 / 3.14 + 180;
-
-								b->y += 1;
-								b->x -= 1;
-								b->angle = atan2(playerXpos - b->x, b->y - playerYpos) * 180 / 3.14 + 180;
-							}
-						} // a zombie
-						else
-						{
-							if (rand() % 2 == 0)//It goes top left or bot right,
-							{
-								a->dy += 1;
-								a->dx += 1;
-								a->angle = atan2(playerXpos - a->x, a->y - playerYpos) * 180 / 3.14 + 180;
-
-								b->dy += 1;
-								b->dx += 1;
-								b->angle = atan2(playerXpos - b->x, b->y - playerYpos) * 180 / 3.14 + 180;
-							}
-							else
-							{
-								a->dy -= 1;
-								a->dx -= 1;
-								a->angle = atan2(playerXpos - a->x, a->y - playerYpos) * 180 / 3.14 + 180;
-
-								b->dy -= 1;
-								b->dx -= 1;
-								b->angle = atan2(playerXpos - b->x, b->y - playerYpos) * 180 / 3.14 + 180;
-							}
-						}
-
-					}
 			}
 
 
-		if (p->thrustU)  p->anim = sPlayer_go;
+		if (p->thrustU)  p->anim = sLeg;
 		else   p->anim = sPlayer;
 
 
@@ -635,38 +548,8 @@ int main()
 
 		if (rand() % 150 == 0)
 		{
-			if (rand() % 2 == 0)//Randomize location 1 Branch : Top/Bot or Left/Right , 2nd Branch , Top, Bot, Left, Right
-			{
-				if (rand() % 2 == 0)
-				{
-					std::uniform_int_distribution<> distr(-200, 0); // define the range
-					randW = distr(eng);
-					randH = rand() % H;
-				}
-				else
-				{
-					std::uniform_int_distribution<> distr(W, W + 200); // define the range
-					randW = distr(eng);
-					randH = rand() % H;
-				}
-			}
-			else
-			{
-				if (rand() % 2 == 0)
-				{
-					std::uniform_int_distribution<> distr(-200, 0); // define the range
-					randH = distr(eng);
-					randW = rand() % W;
-				}
-				else
-				{
-					std::uniform_int_distribution<> distr(H, H + 200); // define the range
-					randH = distr(eng);
-					randW = rand() % W;
-				}
-			}
 			zombie *a = new zombie();
-			a->settings(sRock, randW, randH, rand() % 360, 25);
+			a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
 			entities.push_back(a);
 		}
 
@@ -684,7 +567,40 @@ int main()
 
 
 		//////draw//////
-		app.draw(background);
+
+		for (int i = 0; i< mapW; i++)
+		{
+			for (int j = 0; j < mapH; j++)
+			{
+
+				BCG.setTextureRect(IntRect(0, 0, 32, 32));
+				BCG.setPosition(i * 32, j * 32);
+				app.draw(BCG);
+			}
+		}
+
+		for (int i = 0; i < mapW; i++)
+		{
+			for (int j = 0; j < mapH; j++)
+			{
+
+				if (Map[i][j] == 'A') {
+
+					BCG.setTextureRect(IntRect(32, 0, 32, 32));
+
+				}
+				else if (Map[i][j] == 'B') {
+
+					BCG.setTextureRect(IntRect(64, 0, 32, 32));
+
+				}
+				else if (Map[i][j] == ' ') continue;
+
+				BCG.setPosition(i * 32, j * 32);
+				app.draw(BCG);
+			}
+		}
+		//app.draw(background);
 
 		for (auto i : entities)
 			i->draw(app);
@@ -695,31 +611,5 @@ int main()
 	return 0;
 }
 
-bool isTooClose(float xPos, float yPos)
-{
-	std::list<Entity*> ::iterator i;
-	Entity* temp;
-	float distX;
-	float distY;
-
-	float threshold = 1;
-
-	for (i = entities.begin(); i != entities.end(); i++)
-	{
-		temp = *i;
-		distX = abs(xPos - temp->x);
-		distY = abs(xPos - temp->y);
-
-		if (distX < W && distY < H)
-		{
-			if (distX <= threshold || distY <= threshold)
-			{
-				return true;
-			}
-		}
-		else { return false; }
-	}
-
-	return false;
-
+void updateMouseAngle(sf::Vector2i mouseData) {
 }

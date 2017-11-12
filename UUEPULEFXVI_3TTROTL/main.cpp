@@ -5,7 +5,18 @@
 using namespace sf;
 int playerXpos, playerYpos;//player location
 double mouseXpos, mouseYpos, mouseAngle;//mouse location
+const int mapH = 50;
+const int mapW = 50;
 
+String Map[mapW][mapH];
+/*tring Map[W*H] = {
+"AAAAAAAAAAAA",
+"BBBBBBBBBBBB",
+"CCCCCCCCCCCC",
+"AAAAAAAAAAAA",
+"AAAAAAAAAAAA",
+
+};*/
 int gameMode = 1;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
 const int W = 1200;
 const int H = 800;
@@ -14,7 +25,7 @@ float DEGTORAD = 0.017453f;//This commend was modified in the new branch again 2
 void updateMouseAngle(sf::Vector2i); // This is for making Player point towards Mouse
 
 
-
+									 //asd
 class Animation
 {
 public:
@@ -104,7 +115,7 @@ public:
 		dx = rand() % 8 - 4;
 		dy = rand() % 8 - 4;
 		name = "zombie"; \
-		//angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+			//angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
 	}
 
 	void  update()
@@ -176,7 +187,62 @@ public:
 
 };
 
+/////////////////////////////////////////////
+//MAP GENERATOR///////////////////////////////
+//void generateMap(int mapType) {
+//	int h = 0;
+//	int w = 0;
+//	
+//	switch (mapType)
+//		{
+//	case 1: {
+//		for (h; h < mapH; h++) {
+//			for (w; w < mapW; w++) {
+//				
+//				int x = rand() % 50;
+//				if (x == 1)Map[h][w] =='B';
+//				if (x == 23)Map[h][w] =='A';
+//				else Map[h][w] =='C';
+//				;
+//				
+//			}
+//		}
+//		}
+//	default:
+//		break;
+//	}
+//
 
+//	}
+void generateMap(int mapType) {
+	int x;
+	for (int i = 0; i < mapW; i++)
+	{
+		x = rand() % 70;
+
+		for (int j = 0; j < mapH; j++)
+		{
+			x = rand() % 70;
+
+			if (x == 60) {
+				Map[i][j] = 'A';
+				break;
+			}
+			else
+			{
+				Map[i][j] = ' ';
+
+			}
+			if (x == 26) {
+				Map[i][j] = 'B';
+			}
+			else
+			{
+				Map[i][j] = ' ';
+			}
+		}
+	}
+}
 
 class bullet : public Entity
 {
@@ -318,31 +384,37 @@ int main()
 	app.setFramerateLimit(60);
 
 
-	Texture t1, t2, t3, t4, t5, t6, t7, t8;
+	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9;
 	t1.loadFromFile("images/Player_top.png");
 	t2.loadFromFile("images/background.png");
 	t3.loadFromFile("images/explosions/enemy_die.png");
 	t4.loadFromFile("images/enemy_move.png");
-	t5.loadFromFile("images/fire_blue.png");
+	t5.loadFromFile("images/fire_red.png");
 	t6.loadFromFile("images/rock_small.png");
 	t7.loadFromFile("images/explosions/type_B.png");
-	t8.loadFromFile("images/LEG_ANIM.png");
+	t8.loadFromFile("images/LEG_ANIM1.png");
+	///
+	t9.loadFromFile("images/background/bcg.png");
+
+	Sprite BCG(t9);
+
 
 	t1.setSmooth(true);
 	t2.setSmooth(true);
 
-	Sprite background(t2);
+	//Sprite background(t2);
 
 	Animation sExplosion(t3, 0, 0, 120.5, 73, 6, 0.1);
 	Animation sRock(t4, 0, 0, 120.5, 53, 6, 0.1);
 	Animation sRock_small(t6, 0, 0, 64, 64, 16, 0.2);
 	Animation sBullet(t5, 0, 0, 32, 64, 16, 0.8);
-	Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
+	Animation sPlayer(t8, 53, 0, 53, 120, 6, 0.1);
+	//Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
 	Animation sPlayer_go(t1, 0, 0, 57, 99, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
-	Animation sLeg(t8, 0, 0, 45, 120, 7, 0.2);
+	Animation sLeg(t8, 0, 0, 53, 120, 6, 0.1);
 
-   
+
 	std::list<Entity*> entities;
 
 	for (int i = 0; i<15; i++)
@@ -358,6 +430,8 @@ int main()
 	p->settings(sPlayer, 200, 200, 0, 20);
 	entities.push_back(p);
 
+	////////////////////////////
+	generateMap(1);
 	/////main loop/////
 	while (app.isOpen())
 	{
@@ -434,16 +508,16 @@ int main()
 						b->life = false;
 
 						Entity *e = new Entity();
-						e->settings(sExplosion, a->x, a->y,a->angle);
+						e->settings(sExplosion, a->x, a->y, a->angle);
 						e->name = "explosion";
 						entities.push_back(e);
 
 						/*for (int i = 0; i<2; i++)
 						{
-							if (a->R == 15) continue;
-							Entity *e = new zombie();
-							e->settings(sRock_small, a->x, a->y, rand() % 360, 15);
-							entities.push_back(e);
+						if (a->R == 15) continue;
+						Entity *e = new zombie();
+						e->settings(sRock_small, a->x, a->y, rand() % 360, 15);
+						entities.push_back(e);
 						}*/
 
 					}
@@ -464,7 +538,7 @@ int main()
 			}
 
 
-		if (p->thrustU)  p->anim = sPlayer_go;
+		if (p->thrustU)  p->anim = sLeg;
 		else   p->anim = sPlayer;
 
 
@@ -475,7 +549,7 @@ int main()
 		if (rand() % 150 == 0)
 		{
 			zombie *a = new zombie();
-			a->settings(sRock, rand()%W, rand() % H, rand() % 360, 25);
+			a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
 			entities.push_back(a);
 		}
 
@@ -493,7 +567,40 @@ int main()
 
 
 		//////draw//////
-		app.draw(background);
+
+		for (int i = 0; i< mapW; i++)
+		{
+			for (int j = 0; j < mapH; j++)
+			{
+
+				BCG.setTextureRect(IntRect(0, 0, 32, 32));
+				BCG.setPosition(i * 32, j * 32);
+				app.draw(BCG);
+			}
+		}
+
+		for (int i = 0; i < mapW; i++)
+		{
+			for (int j = 0; j < mapH; j++)
+			{
+
+				if (Map[i][j] == 'A') {
+
+					BCG.setTextureRect(IntRect(32, 0, 32, 32));
+
+				}
+				else if (Map[i][j] == 'B') {
+
+					BCG.setTextureRect(IntRect(64, 0, 32, 32));
+
+				}
+				else if (Map[i][j] == ' ') continue;
+
+				BCG.setPosition(i * 32, j * 32);
+				app.draw(BCG);
+			}
+		}
+		//app.draw(background);
 
 		for (auto i : entities)
 			i->draw(app);
@@ -504,5 +611,5 @@ int main()
 	return 0;
 }
 
-void updateMouseAngle(sf::Vector2i mouseData) { 
+void updateMouseAngle(sf::Vector2i mouseData) {
 }

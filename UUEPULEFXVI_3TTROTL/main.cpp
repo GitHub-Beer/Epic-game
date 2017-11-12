@@ -1,10 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include <time.h>
+#include <random>
 #include <list>
 
 using namespace sf;
 int playerXpos, playerYpos;//player location
 double mouseXpos, mouseYpos, mouseAngle;//mouse location
+
 const int mapH = 50;
 const int mapW = 50;
 
@@ -17,7 +19,11 @@ String Map[mapW][mapH];
 "AAAAAAAAAAAA",
 
 };*/
-int gameMode = 1;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
+
+bool isTooClose(float, float); //For finiding if another entitiy is close or not
+
+int gameMode = 3;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
+
 const int W = 1200;
 const int H = 800;
 const float PI = 3.14159265;
@@ -165,7 +171,37 @@ public:
 				y -= 1;
 			}
 		};//Enemies follow you but not facing you
-		case 3: {};
+		case 3:
+		{
+			bool test = isTooClose;
+			if (isTooClose) {
+
+			}
+			else
+			{
+				if (x<playerXpos)
+				{
+					x += 1;
+					angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+				}
+				else
+				{
+					x -= 1;
+					angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+				}
+				if (y<playerYpos)
+				{
+					y += 1;
+					angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+				}
+				else
+				{
+					y -= 1;
+					angle = atan2(playerXpos - x, y - playerYpos) * 180 / 3.14 + 180;
+				}
+			}
+
+		};//Enemies follow you
 		case 4: {};
 		case 5: {};
 		case 6: {};
@@ -361,9 +397,14 @@ bool isCollide(Entity *a, Entity *b)
 		(a->R + b->R)*(a->R + b->R);
 }
 
+std::list<Entity*> entities;
+
 
 int main()
 {
+	std::random_device rd; // obtain a random number from hardware
+	std::mt19937 eng(rd()); // seed the generator
+
 
 	double mouseXpos, mouseYpos, mouseAngle;
 	sf::Vector2f curPos;
@@ -415,13 +456,53 @@ int main()
 	Animation sLeg(t8, 0, 0, 53, 120, 6, 0.1);
 
 
+
 	std::list<Entity*> entities;
+
+
+
+	int randW, randH;
+
+
+
 
 	for (int i = 0; i<15; i++)
 	{
 		zombie *a = new zombie();
-		//a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);//Zombie spawining
-		a->settings(sRock, rand() % W, rand() % H, a->angle, 25);
+		//a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);//Zombie 
+
+		if (rand() % 2 == 0)//Randomize location 1 Branch : Top/Bot or Left/Right , 2nd Branch , Top, Bot, Left, Right
+		{
+			if (rand() % 2 == 0)
+			{
+				std::uniform_int_distribution<> distr(-200, 0); // define the range
+				randW = distr(eng);
+				randH = rand() % H;
+			}
+			else
+			{
+				std::uniform_int_distribution<> distr(W, W + 200); // define the range
+				randW = distr(eng);
+				randH = rand() % H;
+			}
+		}
+		else
+		{
+			if (rand() % 2 == 0)
+			{
+				std::uniform_int_distribution<> distr(-200, 0); // define the range
+				randH = distr(eng);
+				randW = rand() % W;
+			}
+			else
+			{
+				std::uniform_int_distribution<> distr(H, H + 200); // define the range
+				randH = distr(eng);
+				randW = rand() % W;
+			}
+		}
+
+		a->settings(sRock, randW, randH, a->angle, 25);
 		/*	a->settings(sRock, 0, rand() % H, rand() % 360, 25);*/
 		entities.push_back(a);
 	}
@@ -535,6 +616,59 @@ int main()
 						p->settings(sPlayer, W / 2, H / 2, 0, 20);
 						p->dx = 0; p->dy = 0;
 					}
+
+				if (a->name == "zombie" && b->name == "zombie")
+					if (isCollide(a, b))
+					{
+
+						if (rand() % 2 == 0)
+						{
+							if (rand() % 2 == 0)//It goes bot left or top right,
+							{
+								a->y -= 1;
+								a->x += 1;
+								a->angle = atan2(playerXpos - a->x, a->y - playerYpos) * 180 / 3.14 + 180;
+
+								b->y -= 1;
+								b->x += 1;
+								b->angle = atan2(playerXpos - b->x, b->y - playerYpos) * 180 / 3.14 + 180;
+							}
+							else
+							{
+								a->y += 1;
+								a->x -= 1;
+								a->angle = atan2(playerXpos - a->x, a->y - playerYpos) * 180 / 3.14 + 180;
+
+								b->y += 1;
+								b->x -= 1;
+								b->angle = atan2(playerXpos - b->x, b->y - playerYpos) * 180 / 3.14 + 180;
+							}
+						} // a zombie
+						else
+						{
+							if (rand() % 2 == 0)//It goes top left or bot right,
+							{
+								a->dy += 1;
+								a->dx += 1;
+								a->angle = atan2(playerXpos - a->x, a->y - playerYpos) * 180 / 3.14 + 180;
+
+								b->dy += 1;
+								b->dx += 1;
+								b->angle = atan2(playerXpos - b->x, b->y - playerYpos) * 180 / 3.14 + 180;
+							}
+							else
+							{
+								a->dy -= 1;
+								a->dx -= 1;
+								a->angle = atan2(playerXpos - a->x, a->y - playerYpos) * 180 / 3.14 + 180;
+
+								b->dy -= 1;
+								b->dx -= 1;
+								b->angle = atan2(playerXpos - b->x, b->y - playerYpos) * 180 / 3.14 + 180;
+							}
+						}
+
+					}
 			}
 
 
@@ -548,8 +682,40 @@ int main()
 
 		if (rand() % 150 == 0)
 		{
+			if (rand() % 2 == 0)//Randomize location 1 Branch : Top/Bot or Left/Right , 2nd Branch , Top, Bot, Left, Right
+			{
+				if (rand() % 2 == 0)
+				{
+					std::uniform_int_distribution<> distr(-200, 0); // define the range
+					randW = distr(eng);
+					randH = rand() % H;
+				}
+				else
+				{
+					std::uniform_int_distribution<> distr(W, W + 200); // define the range
+					randW = distr(eng);
+					randH = rand() % H;
+				}
+			}
+			else
+			{
+				if (rand() % 2 == 0)
+				{
+					std::uniform_int_distribution<> distr(-200, 0); // define the range
+					randH = distr(eng);
+					randW = rand() % W;
+				}
+				else
+				{
+					std::uniform_int_distribution<> distr(H, H + 200); // define the range
+					randH = distr(eng);
+					randW = rand() % W;
+				}
+			}
 			zombie *a = new zombie();
+
 			a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
+
 			entities.push_back(a);
 		}
 
@@ -611,5 +777,34 @@ int main()
 	return 0;
 }
 
-void updateMouseAngle(sf::Vector2i mouseData) {
+
+
+bool isTooClose(float xPos, float yPos)
+{
+	std::list<Entity*> ::iterator i;
+	Entity* temp;
+	float distX;
+	float distY;
+
+	float threshold = 1;
+
+	for (i = entities.begin(); i != entities.end(); i++)
+	{
+		temp = *i;
+		distX = abs(xPos - temp->x);
+		distY = abs(xPos - temp->y);
+
+		if (distX < W && distY < H)
+		{
+			if (distX <= threshold || distY <= threshold)
+			{
+				return true;
+			}
+		}
+		else { return false; }
+	}
+
+	return false;
+
 }
+

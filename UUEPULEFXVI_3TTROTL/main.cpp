@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-
+#include<SFML/Audio.hpp>
 #include <time.h>
 #include <random>
 #include <list>
@@ -32,26 +32,6 @@ void generateMap(int mapType); //Map generator
 float getPlayerX();
 float getPlayerY();
 
-
-		for (int j = 0; j < mapH; j++)
-		{
-			x = rand() % 70;
-
-			if (x == 60) {
-				Map[i][j] = 'A';
-				
-			}
-			
-			/*else*/ if (x == 26) {
-				Map[i][j] = 'B';
-			}
-			else if(x!=26 && x!=60)
-			{
-				Map[i][j] = ' ';
-			}
-		}
-	}
-}
 
 
 //Include all other parts of the game
@@ -101,7 +81,7 @@ int main()
 	//Log.setSize(50);
 
 	RenderWindow app(VideoMode(W, H), "The third return of the legend!");
-	app.setFramerateLimit(60);
+	app.setFramerateLimit(120);
 
 
 	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9;
@@ -418,10 +398,7 @@ int main()
 				}
 			}
 			zombie *a = new zombie();
-
-			a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
-
-
+			a->settings(sRock, randW, randH, rand() % 360, 25);
 			entities.push_back(a);
 		}
 
@@ -483,7 +460,7 @@ int main()
 				}
 				else if (Map[i][j] == ' ') continue;
 
-				UPD.setPosition(i * 32 - playerXpos, j * 32 - playerYpos);
+				UPD.setPosition(i * 32, j * 32);
 				app.draw(UPD);
 
 			}
@@ -500,27 +477,26 @@ int main()
 			{
 				/*if (playerXpos/32== i&&playerYpos/32 == j) {
 					rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
-				}
-				else {
-					if (Map[i][j] == 'A') {
 
-						rectangle.setFillColor(Color::Color(0, 255, 0, 128));
+				if (Map[i][j] == 'A') {
 
-					}
-					else if (Map[i][j] == 'B') {
-
-						rectangle.setFillColor(Color::Cyan);
-
-					}
-					else if (Map[i][j] == ' ') 	rectangle.setFillColor(Color::Color(0, 0, 0, 128));
+					rectangle.setFillColor(Color::Color(0, 255, 0, 128));
 
 				}
-				rectangle.setPosition(i * 4+mMapX, j * 4+mMapY);
-			
-				
+				else if (Map[i][j] == 'B') {
+
+					rectangle.setFillColor(Color::Cyan);
+
+				}
+				else if (Map[i][j] == ' ') 	rectangle.setFillColor(Color::Color(0, 0, 0, 128));
+				rectangle.setPosition(i * 4 + mMapX, j * 4 + mMapY);
 				app.draw(rectangle);
-
 			}
+
+
+			
+
+
 		}
 		app.display();
 	}
@@ -555,7 +531,7 @@ int main()
 //		break;
 //	}
 //
-/*void generateMap(int mapType) {
+void generateMap(int mapType) {
 	int x;
 	for (int i = 0; i < mapW; i++)
 	{
@@ -567,24 +543,21 @@ int main()
 
 			if (x == 60) {
 				Map[i][j] = 'A';
-				break;
-			}
-			else
-			{
-				Map[i][j] = ' ';
 
 			}
-			if (x == 26) {
+
+			/*else*/ if (x == 26) {
 				Map[i][j] = 'B';
 			}
-			else if(
+			else if (x != 26 && x != 60)
 			{
 				Map[i][j] = ' ';
 			}
 		}
 	}
 }
-*/
+
+
 
 bool isCollide(Entity *a, Entity *b)
 {

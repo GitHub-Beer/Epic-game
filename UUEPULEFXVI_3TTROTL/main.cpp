@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+
 #include <time.h>
 #include <random>
 #include <list>
@@ -6,6 +7,8 @@
 #include "constants.h"
 
 using namespace Constants;
+
+
 
 
 //Global stuff
@@ -20,6 +23,8 @@ using namespace sf;
 };*/
 
 
+
+
 //Global functions
 bool isTooClose(float, float); //For finiding if another entitiy is close or not
 void updateMouseAngle(sf::Vector2i); // This is for making Player point towards Mouse
@@ -27,6 +32,26 @@ void generateMap(int mapType); //Map generator
 float getPlayerX();
 float getPlayerY();
 
+
+		for (int j = 0; j < mapH; j++)
+		{
+			x = rand() % 70;
+
+			if (x == 60) {
+				Map[i][j] = 'A';
+				
+			}
+			
+			/*else*/ if (x == 26) {
+				Map[i][j] = 'B';
+			}
+			else if(x!=26 && x!=60)
+			{
+				Map[i][j] = ' ';
+			}
+		}
+	}
+}
 
 
 //Include all other parts of the game
@@ -53,6 +78,7 @@ std::list<Entity*> entities; //Entities
 
 //main
 int main()
+
 {
 
 	std::random_device rd; // obtain a random number from hardware
@@ -90,11 +116,21 @@ int main()
 	///
 	t9.loadFromFile("images/background/bcg.png");
 
+
 	Sprite BCG(t9);
+	Sprite UPD(t9);
+
+
 
 	//RectangleShape rect(Ve;
 	t1.setSmooth(true);
 	t2.setSmooth(true);
+	
+
+
+	RectangleShape rectangle(Vector2f(4, 4));
+	int mMapX = 1000;
+	int mMapY = 650;
 
 	//Sprite background(t2);
 
@@ -102,12 +138,21 @@ int main()
 	Animation sRock(t4, 0, 0, 120.5, 53, 6, 0.1);
 	Animation sRock_small(t6, 0, 0, 64, 64, 16, 0.2);
 	Animation sBullet(t5, 0, 0, 32, 64, 16, 0.8);
-	Animation sPlayer(t8, 53, 0, 53, 120, 6, 0.1);
+
+	Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
 	//Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
 	Animation sPlayer_go(t1, 0, 0, 57, 99, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
-	Animation sLeg(t8, 0, 0, 53, 120, 6, 0.1);
-
+	Animation sLeg(t1, 0, 0, 57, 99, 1, 0);
+	SoundBuffer buffer;
+	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
+	Sound sound(buffer);
+	SoundBuffer buf;
+	buf.loadFromFile("Jump.ogg");
+	Sound sou(buf);
+	Music music;
+    music.openFromFile("Mario_Theme.ogg");
+    music.play();
 
 
 	std::list<Entity*> entities;
@@ -162,7 +207,7 @@ int main()
 	}
 
 	player *p = new player();
-	p->settings(sPlayer, 200, 200, 0, 20);
+	p->settings(sPlayer, W/2, H/2, 0, 20);
 	entities.push_back(p);
 
 	////////////////////////////
@@ -180,6 +225,7 @@ int main()
 				if (event.key.code == Mouse::Left)
 				{
 					bullet *b = new bullet();
+					sound.play();
 					b->settings(sBullet, p->x, p->y, p->angle, 10);
 					entities.push_back(b);
 				}
@@ -243,8 +289,11 @@ int main()
 						b->life = false;
 
 						Entity *e = new Entity();
+
 						e->settings(sExplosion, a->x, a->y, a->angle,1);
+
 						e->name = "explosion";
+						sou.play();
 						entities.push_back(e);
 
 						/*for (int i = 0; i<2; i++)
@@ -326,7 +375,9 @@ int main()
 			}
 
 
-		if (p->thrustU)  p->anim = sLeg;
+
+		if (p->thrustU)  p->anim = sPlayer;
+
 		else   p->anim = sPlayer;
 
 
@@ -370,6 +421,7 @@ int main()
 
 			a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
 
+
 			entities.push_back(a);
 		}
 
@@ -397,17 +449,20 @@ int main()
 
 		//////draw//////
 
+		//Grass Background//
+
 		for (int i = 0; i< mapW; i++)
 		{
 			for (int j = 0; j < mapH; j++)
 			{
 
 				BCG.setTextureRect(IntRect(0, 0, 32, 32));
+
 				BCG.setPosition(i * 32, j * 32);
 				app.draw(BCG);
 			}
 		}
-
+//upd back
 		for (int i = 0; i < mapW; i++)
 		{
 			for (int j = 0; j < mapH; j++)
@@ -415,44 +470,56 @@ int main()
 
 				if (Map[i][j] == 'A') {
 
-					BCG.setTextureRect(IntRect(32, 0, 32, 32));
+					UPD.setTextureRect(IntRect(32, 0, 32, 32));
+
 
 				}
 				else if (Map[i][j] == 'B') {
 
-					BCG.setTextureRect(IntRect(64, 0, 32, 32));
+
+					UPD.setTextureRect(IntRect(64, 0, 32, 32));
+
 
 				}
 				else if (Map[i][j] == ' ') continue;
 
-				BCG.setPosition(i * 32, j * 32);
-				app.draw(BCG);
+				UPD.setPosition(i * 32 - playerXpos, j * 32 - playerYpos);
+				app.draw(UPD);
+
 			}
 		}
 		//app.draw(background);
 
 		for (auto i : entities)
 			i->draw(app);
-
+	
+	
 		for (int i = 0; i < mapW; i++)
 		{
 			for (int j = 0; j < mapH; j++)
 			{
+				/*if (playerXpos/32== i&&playerYpos/32 == j) {
+					rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
+				}
+				else {
+					if (Map[i][j] == 'A') {
 
-				if (Map[i][j] == 'A') {
+						rectangle.setFillColor(Color::Color(0, 255, 0, 128));
 
-					BCG.setTextureRect(IntRect(32, 0, 32, 32));
+					}
+					else if (Map[i][j] == 'B') {
+
+						rectangle.setFillColor(Color::Cyan);
+
+					}
+					else if (Map[i][j] == ' ') 	rectangle.setFillColor(Color::Color(0, 0, 0, 128));
 
 				}
-				else if (Map[i][j] == 'B') {
+				rectangle.setPosition(i * 4+mMapX, j * 4+mMapY);
+			
+				
+				app.draw(rectangle);
 
-					BCG.setTextureRect(IntRect(64, 0, 32, 32));
-
-				}
-				else if (Map[i][j] == ' ') continue;
-
-				BCG.setPosition(i * 32, j * 32);
-				app.draw(BCG);
 			}
 		}
 		app.display();
@@ -460,6 +527,7 @@ int main()
 
 	return 0;
 }
+
 
 //Map Generator
 /////////////////////////////////////////////
@@ -487,7 +555,7 @@ int main()
 //		break;
 //	}
 //
-void generateMap(int mapType) {
+/*void generateMap(int mapType) {
 	int x;
 	for (int i = 0; i < mapW; i++)
 	{
@@ -509,14 +577,14 @@ void generateMap(int mapType) {
 			if (x == 26) {
 				Map[i][j] = 'B';
 			}
-			else
+			else if(
 			{
 				Map[i][j] = ' ';
 			}
 		}
 	}
 }
-
+*/
 
 bool isCollide(Entity *a, Entity *b)
 {
@@ -557,3 +625,4 @@ bool isTooClose(float xPos, float yPos)
 
 float getPlayerX() { return playerX; }
 float getPlayerY() { return playerY; }
+

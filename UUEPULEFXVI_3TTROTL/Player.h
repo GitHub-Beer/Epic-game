@@ -69,8 +69,8 @@ public:
 		}
 		else
 		{
-			dx *=dx- 0.1*time;
-			dy *= dx- 0.1*time;
+			dx = 0;
+			dy = 0;
 			//angle = 0;
 		}
 

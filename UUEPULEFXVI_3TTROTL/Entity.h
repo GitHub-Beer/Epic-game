@@ -27,7 +27,7 @@ public:
 		R = radius;
 	}
 
-	virtual void update() {};
+	virtual void update(float time) {};
 
 	void draw(RenderWindow &app)
 	{

@@ -26,7 +26,7 @@ public:
 	}
 
 
-	void update()
+	void update(float time)
 	{
 		Frame += speed;
 		int n = frames.size();

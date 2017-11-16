@@ -81,7 +81,7 @@ int main()
 	//Log.setSize(50);
 
 	RenderWindow app(VideoMode(W, H), "The third return of the legend!");
-	app.setFramerateLimit(120);
+	//app.setFramerateLimit(120);
 
 
 	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9;
@@ -193,8 +193,16 @@ int main()
 	////////////////////////////
 	generateMap(1);
 	/////main loop/////
+	Clock clock;
+	float time = 0;
+
 	while (app.isOpen())
 	{
+		time = clock.getElapsedTime().asMilliseconds();
+		clock.restart();
+		time = time / 100;
+		if (time > 50) time = 50;
+		
 		Event event;
 		while (app.pollEvent(event))
 		{
@@ -331,22 +339,22 @@ int main()
 						{
 							if (rand() % 2 == 0)//It goes top left or bot right,
 							{
-								a->dy += 1;
-								a->dx += 1;
+								a->dy += 1 * time;
+								a->dx += 1 * time;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->dy += 1;
-								b->dx += 1;
+								b->dy += 1 * time;
+								b->dx += 1 * time;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 							else
 							{
-								a->dy -= 1;
-								a->dx -= 1;
+								a->dy -= 1 * time;
+								a->dx -= 1 * time;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->dy -= 1;
-								b->dx -= 1;
+								b->dy -= 1 * time;
+								b->dx -= 1 * time;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 						}
@@ -406,8 +414,8 @@ int main()
 		{
 			Entity *e = *i;
 
-			e->update();
-			e->anim.update();
+			e->update(time);
+			e->anim.update(time);
 
 			//Update player x and y location global variable
 			if (e->name == "player")

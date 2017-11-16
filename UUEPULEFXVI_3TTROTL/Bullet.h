@@ -11,10 +11,10 @@ public:
 		name = "bullet";
 	}
 
-	void  update()
+	void  update(float time)
 	{
-		dx = cos(angle*DEGTORAD) * 6;
-		dy = sin(angle*DEGTORAD) * 6;
+		dx = cos(angle*DEGTORAD) * 60*time;
+		dy = sin(angle*DEGTORAD) * 60*time;
 		// angle+=rand()%6-3;
 		x += dx;
 		y += dy;

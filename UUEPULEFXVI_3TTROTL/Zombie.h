@@ -12,13 +12,13 @@ public:
 
 	zombie()
 	{
-		dx = rand() % 8 - 4;
-		dy = rand() % 8 - 4;
+		dx = 0.1;
+		dy = 0.1;
 		name = "zombie"; \
 			//angle = atan2(getXlocation() - x, y - getYlocation()) * 180 / 3.14 + 180;
 	}
 
-	void  update()
+	void  update(float time)
 	{
 		//Get player location
 		//i = entities.end();
@@ -31,22 +31,22 @@ public:
 		{
 			if (x<getPlayerX())
 			{
-				x += 1;
+				dx += 0.5*time;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 			else
 			{
-				x -= 1;
+				dx -= 0.5*time;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 			if (y<getPlayerY())
 			{
-				y += 1;
+				dy += 0.5*time;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 			else
 			{
-				y -= 1;
+				dy -= 0.5*time;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 		};//Enemies follow you
@@ -54,19 +54,19 @@ public:
 		{
 			if (x<getPlayerX())
 			{
-				x += 1;
+				dx += 1;
 			}
 			else
 			{
-				x -= 1;
+				dx -= 1;
 			}
 			if (y<getPlayerY())
 			{
-				y += 1;
+				dy += 1;
 			}
 			else
 			{
-				y -= 1;
+				dy -= 1;
 			}
 		};//Enemies follow you but not facing you
 		case 3: {};
@@ -82,8 +82,15 @@ public:
 			//y += dy;
 		}
 		}
-		//x += dx;
-		//y += dy;
+		int maxSpeed = 5;
+		float speed = sqrt(dx*dx + dy*dy);
+		if (speed>maxSpeed)
+		{
+			dx *= maxSpeed / speed;
+			dy *= maxSpeed / speed;
+		}
+		x += dx*time;
+		y += dy*time;
 
 		if (x>W) x = 0;  if (x<0) x = W;
 		if (y>H) y = 0;  if (y<0) y = H;

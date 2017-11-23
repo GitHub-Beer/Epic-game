@@ -13,8 +13,8 @@ public:
 
 	void  update(float time)
 	{
-		dx = cos(angle*DEGTORAD) * 60*time;
-		dy = sin(angle*DEGTORAD) * 60*time;
+		dx = cos(angle*DEGTORAD) * 60 * time;
+		dy = sin(angle*DEGTORAD) * 60 * time;
 		// angle+=rand()%6-3;
 		x += dx;
 		y += dy;

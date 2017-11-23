@@ -43,8 +43,11 @@ float getPlayerY();
 #include "Player.h"
 #include "Walls.h"
 #include "Zombie.h"
+#include "Weapon.h"
+
 
 bool isCollide(Entity *a, Entity *b);
+bool calculateDistance(Entity *a, Entity *b, weapon *c);
 
 //global variable
 float playerX;
@@ -82,7 +85,16 @@ int main()
 
 	RenderWindow app(VideoMode(W, H), "The third return of the legend!");
 	//app.setFramerateLimit(120);
-
+	float angleModifier[100] = { 0,1.1,-1.2,5.2,-5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10 };
 
 	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9;
 	t1.loadFromFile("images/Player_top.png");
@@ -126,7 +138,7 @@ int main()
 	Animation sLeg(t1, 0, 0, 57, 99, 1, 0);
 	SoundBuffer buffer;
 	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
-	Sound sound(buffer);
+	
 	SoundBuffer buf;
 	buf.loadFromFile("Jump.ogg");
 	Sound sou(buf);
@@ -189,13 +201,15 @@ int main()
 	player *p = new player();
 	p->settings(sPlayer, W/2, H/2, 0, 20);
 	entities.push_back(p);
-
+	
 	////////////////////////////
 	generateMap(1);
 	/////main loop/////
 	Clock clock;
 	float time = 0;
-
+	weapon *w = new weapon();
+	w->weaponSetup("weap_deserteagle_slmn_2.wav", 10, 10, 10, 20, 50, 500);
+	entities.push_back(w);
 	while (app.isOpen())
 	{
 		time = clock.getElapsedTime().asMilliseconds();
@@ -209,14 +223,26 @@ int main()
 			if (event.type == Event::Closed)
 				app.close();
 
-			if (event.type == Event::MouseButtonPressed)
-				if (event.key.code == Mouse::Left)
+			if (event.type == Event::KeyPressed)
+				if (event.key.code == Keyboard::Space)
 				{
-					bullet *b = new bullet();
-					sound.play();
-					b->settings(sBullet, p->x, p->y, p->angle, 10);
-					entities.push_back(b);
+				if (w->canshoot(time) && w->currammo>0) {
+						for (int i = 0; i < rand() % w->spt; i++) {
+							bullet *b = new bullet();
+							b->settings(sBullet, p->x, p->y, p->angle -45+rand()%90, 10);
+							entities.push_back(b);
+						}
+   						w->play();
+						
+						w->currammo--;
+						w->counter_spm = 0;
+					}
+				if (w->currammo == 0) {
+					w->reload(time);
+
 				}
+				}
+
 		}
 
 		//Angle Update
@@ -360,6 +386,13 @@ int main()
 						}
 
 					}
+				////////////////////delete bulletts after distance
+				if (a->name == "player"&&b->name == "bullet") {
+					if (calculateDistance(a,b,w)) {
+						b->life = false;
+					}
+				
+				}
 			}
 
 
@@ -606,4 +639,30 @@ bool isTooClose(float xPos, float yPos)
 
 float getPlayerX() { return playerX; }
 float getPlayerY() { return playerY; }
+bool calculateDistance(Entity *a, Entity *b, weapon *c) {
+	return abs(sqrt((b->x - a->x)*(b->x - a->x) +
+		(b->y - a->y)*(b->y - a->y)))>c->dist;
+}
 
+//void NewMapGenerator(int Breakable,int Unbreakable, Entity e) {
+//	int randomX = 0;
+//	int randomY = 0;
+//	Animation Anim();
+//	Animation Anim();
+//	for (int x = 0; x < Breakable; x++) {
+//		wall *w = new wall();
+//		randomX = rand() % 50;//Map size
+//		randomX = rand() % 50;//Map size
+//		w->settings(Anim, randomX * 32, randomY * 32, 0, 32);
+//		entities.push_back(w)
+//			for (auto a:entities) {
+//				if()
+//			}
+//	}
+//	for (int x = 0; x < Unbreakable; x++) {
+//
+//
+//
+//	}
+//
+//}

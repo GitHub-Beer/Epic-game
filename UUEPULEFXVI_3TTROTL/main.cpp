@@ -33,6 +33,7 @@ float getPlayerX();
 float getPlayerY();
 bool isCollide(Entity *a, Entity *b);
 void offsetEntities(int howMuchX, int howMuchY);
+bool isOutsideMap(int howMuchX, int howMuchY);
 
 
 
@@ -53,24 +54,24 @@ float playerX;
 float playerY;
 //sf::String Map[50][50];
 int gameState[maxW][maxH]; //Stores the information of entities in map at location W and H , buffer is outside area
-												   /*
-												   0 = nothing
-												   1 = Pickup
-												   2 = Zombie
-												   3 = Bullet
-												   4 = Player
-												   5 = Wall
-												   6 = Passable wall or grass
-												   7 = Breakable wall
-												   */
+						   /*
+						   0 = nothing
+						   1 = Pickup
+						   2 = Zombie
+						   3 = Bullet
+						   4 = Player
+						   5 = Wall
+						   6 = Passable wall or grass
+						   7 = Breakable wall
+						   */
 
-//extern int getXlocation(), getYlocation();//player location
+						   //extern int getXlocation(), getYlocation();//player location
 std::list<Entity*> entities; //Entities
 
-//std::list<Entity*> entities;
+							 //std::list<Entity*> entities;
 
 
-//main
+							 //main
 int main()
 
 {
@@ -92,8 +93,8 @@ int main()
 	sf::Text text;
 
 	// select the font
-	text.setFont(font); 				
-	text.setCharacterSize(28); 
+	text.setFont(font);
+	text.setCharacterSize(28);
 	text.setColor(sf::Color::Red);
 	text.setStyle(sf::Text::Bold);
 
@@ -101,7 +102,7 @@ int main()
 	//app.setFramerateLimit(120);
 
 
-	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9,t11,t12,t13;
+	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9, t11, t12, t13;
 	t1.loadFromFile("images/Player_top.png");
 	t2.loadFromFile("images/background.png");
 	t3.loadFromFile("images/explosions/enemy_die.png");
@@ -125,7 +126,7 @@ int main()
 	//RectangleShape rect(Ve;
 	t1.setSmooth(true);
 	t2.setSmooth(true);
-	
+
 
 
 	RectangleShape rectangle(Vector2f(4, 4));
@@ -158,8 +159,8 @@ int main()
 	buf.loadFromFile("Jump.ogg");
 	Sound sou(buf);
 	Music music;
-    music.openFromFile("Mario_Theme.ogg");
-    music.play();
+	music.openFromFile("Mario_Theme.ogg");
+	music.play();
 
 
 
@@ -247,7 +248,7 @@ int main()
 	}
 
 	player *p = new player();
-	p->settings(sPlayer, W/2, H/2, 0, 20);
+	p->settings(sPlayer, W / 2 , H / 2, 0, 20);
 	entities.push_back(p);
 
 	////////////////////////////
@@ -255,6 +256,19 @@ int main()
 	/////main loop/////
 	Clock clock;
 	float time = 0;
+
+
+	//for (auto i : entities) {
+	//	//if (i->name != "player")
+	//	//{
+	//		i->x -= -160;
+	//		i->y -= -440;
+	//	//	offset_x += howMuchX;
+	//	//	offset_y += howMuchY;
+	//	//}
+	//}
+
+	//offsetEntities(-(maxW/2 - W/2), (maxH/2 - H/2));
 
 	while (app.isOpen())
 	{
@@ -516,58 +530,58 @@ int main()
 		//////draw//////
 
 		//Grass Background//
-//
-//		for (int i = 0; i< mapW; i++)
-//		{
-//			for (int j = 0; j < mapH; j++)
-//			{
-//
-//				BCG.setTextureRect(IntRect(0, 0, 32, 32));
-//
-//				BCG.setPosition(i * 32, j * 32);
-//				app.draw(BCG);
-//			}
-//		}
-////upd back
-//		for (int i = 0; i < mapW; i++)
-//		{
-//			for (int j = 0; j < mapH; j++)
-//			{
-//
-//				if (Map[i][j] == 'A') {
-//
-//					UPD.setTextureRect(IntRect(32, 0, 32, 32));
-//
-//
-//				}
-//				else if (Map[i][j] == 'B') {
-//
-//
-//					UPD.setTextureRect(IntRect(64, 0, 32, 32));
-//
-//
-//				}
-//				else if (Map[i][j] == ' ') continue;
-//
-//				UPD.setPosition(i * 32, j * 32);
-//				app.draw(UPD);
-//
-//			}
-//		}
-//		//app.draw(background);
+		//
+		//		for (int i = 0; i< mapW; i++)
+		//		{
+		//			for (int j = 0; j < mapH; j++)
+		//			{
+		//
+		//				BCG.setTextureRect(IntRect(0, 0, 32, 32));
+		//
+		//				BCG.setPosition(i * 32, j * 32);
+		//				app.draw(BCG);
+		//			}
+		//		}
+		////upd back
+		//		for (int i = 0; i < mapW; i++)
+		//		{
+		//			for (int j = 0; j < mapH; j++)
+		//			{
+		//
+		//				if (Map[i][j] == 'A') {
+		//
+		//					UPD.setTextureRect(IntRect(32, 0, 32, 32));
+		//
+		//
+		//				}
+		//				else if (Map[i][j] == 'B') {
+		//
+		//
+		//					UPD.setTextureRect(IntRect(64, 0, 32, 32));
+		//
+		//
+		//				}
+		//				else if (Map[i][j] == ' ') continue;
+		//
+		//				UPD.setPosition(i * 32, j * 32);
+		//				app.draw(UPD);
+		//
+		//			}
+		//		}
+		//		//app.draw(background);
 
 		for (auto i : entities)
 			i->draw(app);
 
 
-		rectangle1.setFillColor(Color::Color(0,0,0,128));
+		rectangle1.setFillColor(Color::Color(0, 0, 0, 128));
 		rectangle1.setPosition(mMapX, mMapY);
 		app.draw(rectangle1);
 
 		for (auto i : entities) {
 
 			/*if (playerXpos/32== i&&playerYpos/32 == j) {
-				rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
+			rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
 
 			if (i->name == "p_wall") {
 
@@ -590,17 +604,17 @@ int main()
 
 			}
 			else if (i->name == "wall") 	rectangle.setFillColor(Color::Color(0, 0, 0, 128));
-			rectangle.setPosition((i->x / 32 ) * 4 + mMapX,( i->y / 32)* 4 + mMapY);
+			rectangle.setPosition((i->x / 32) * 4 + mMapX, (i->y / 32) * 4 + mMapY);
 			app.draw(rectangle);
 		}
-	
+
 		//}
 		//	
 
 
 		//}		
 		text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
-		app .draw(text);
+		app.draw(text);
 		app.display();
 	}
 
@@ -660,17 +674,30 @@ int main()
 //	}
 //}
 
-void offsetEntities(int howMuchX,int howMuchY) 
+void offsetEntities(int howMuchX, int howMuchY)
 {
 	for (auto i : entities) {
 		if (i->name != "player")
 		{
 			i->x -= howMuchX;
 			i->y -= howMuchY;
-
+			offset_x += howMuchX;
+			offset_y += howMuchY;
 		}
-
 	}
+}
+
+bool isOutsideMap(int howMuchX, int howMuchY)
+{
+	//for (auto i : entities)
+	//{
+	//	if ((i->x + howMuchX) < 0 || i->x + howMuchX > maxW
+	//		|| i->y + howMuchY < 0 || i->y + howMuchY > maxH)
+	//	{
+			return true;
+	//	}
+	//	else return false;
+	//}
 }
 
 void generateMap(int mapType) {

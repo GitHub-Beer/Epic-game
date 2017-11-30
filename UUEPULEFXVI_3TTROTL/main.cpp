@@ -483,14 +483,14 @@ int main()
 			{
 				playerX = e->x;
 				playerY = e->y;
-				if ((e->x <= (maxW - (W / 2)) && e->x > (W / 2)))
-				{
-					offset_x = e->x - (W / 2);
-				}
-				if ((e->y <= (maxH - (H / 2)) && e->y > (H / 2)))
-				{
-					offset_y = e->y - (H / 2);
-				}
+				//if ((e->x <= (maxW - (W / 2)) && e->x > (W / 2)))
+				//{
+				//	offset_x = e->x - (W / 2);
+				//}
+				//if ((e->y <= (maxH - (H / 2)) && e->y > (H / 2)))
+				//{
+				//	offset_y = e->y - (H / 2);
+				//}
 
 			}
 			if (e->name != "player" && e->name != "zombie")

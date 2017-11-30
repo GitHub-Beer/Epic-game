@@ -9,11 +9,15 @@ using namespace Constants;
 class zombie : public Entity
 {
 public:
+	float maxSpeed, acc;
+
 
 	zombie()
 	{
 		dx = 0.1;
 		dy = 0.1;
+		acc = 5;
+		maxSpeed = 10;
 		name = "zombie"; \
 			//angle = atan2(getXlocation() - x, y - getYlocation()) * 180 / 3.14 + 180;
 	}
@@ -31,22 +35,22 @@ public:
 		{
 			if (x<getPlayerX())
 			{
-				dx += 0.5*time;
+				dx += maxSpeed;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 			else
 			{
-				dx -= 0.5*time;
+				dx -= maxSpeed;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 			if (y<getPlayerY())
 			{
-				dy += 0.5*time;
+				dy += 5;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 			else
 			{
-				dy -= 0.5*time;
+				dy -= 5;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 		};//Enemies follow you
@@ -82,7 +86,7 @@ public:
 			//y += dy;
 		}
 		}
-		int maxSpeed = 5;
+		
 		float speed = sqrt(dx*dx + dy*dy);
 		if (speed>maxSpeed)
 		{

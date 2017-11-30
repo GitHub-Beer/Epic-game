@@ -45,7 +45,6 @@ float getPlayerY();
 #include "Zombie.h"
 #include "Weapon.h"
 
-
 bool isCollide(Entity *a, Entity *b);
 bool calculateDistance(Entity *a, Entity *b, weapon *c);
 
@@ -85,7 +84,7 @@ int main()
 
 	RenderWindow app(VideoMode(W, H), "The third return of the legend!");
 	//app.setFramerateLimit(120);
-	float angleModifier[100] = { 0,1.1,-1.2,5.2,-5,6,7,8,9,10,
+	/*float angleModifier[100] = { 0,1.1,-1.2,5.2,-5,6,7,8,9,10,
 								1,2,3,4,5,6,7,8,9,10,
 								1,2,3,4,5,6,7,8,9,10,
 								1,2,3,4,5,6,7,8,9,10,
@@ -94,7 +93,7 @@ int main()
 								1,2,3,4,5,6,7,8,9,10,
 								1,2,3,4,5,6,7,8,9,10,
 								1,2,3,4,5,6,7,8,9,10,
-								1,2,3,4,5,6,7,8,9,10 };
+								1,2,3,4,5,6,7,8,9,10 };*/
 
 	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9;
 	t1.loadFromFile("images/Player_top.png");
@@ -138,7 +137,7 @@ int main()
 	Animation sLeg(t1, 0, 0, 57, 99, 1, 0);
 	SoundBuffer buffer;
 	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
-	
+	Sound DE(buffer);
 	SoundBuffer buf;
 	buf.loadFromFile("Jump.ogg");
 	Sound sou(buf);
@@ -232,7 +231,7 @@ int main()
 							b->settings(sBullet, p->x, p->y, p->angle -45+rand()%90, 10);
 							entities.push_back(b);
 						}
-   						w->play();
+   						DE.play();
 						
 						w->currammo--;
 						w->counter_spm = 0;
@@ -342,22 +341,22 @@ int main()
 						{
 							if (rand() % 2 == 0)//It goes bot left or top right,
 							{
-								a->y -= 1;
-								a->x += 1;
+								a->y -= 4;
+								a->x += 4;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->y -= 1;
-								b->x += 1;
+								b->y += 4;
+								b->x -= 4;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 							else
 							{
-								a->y += 1;
-								a->x -= 1;
+								a->y += 4;
+								a->x -= 4;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->y += 1;
-								b->x -= 1;
+								b->y -= 4;
+								b->x += 4;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 						} // a zombie
@@ -365,22 +364,22 @@ int main()
 						{
 							if (rand() % 2 == 0)//It goes top left or bot right,
 							{
-								a->dy += 1 * time;
-								a->dx += 1 * time;
+								a->y-= 4;
+								a->x-= 4;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->dy += 1 * time;
-								b->dx += 1 * time;
+								b->y += 4;
+								b->x += 4;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 							else
 							{
-								a->dy -= 1 * time;
-								a->dx -= 1 * time;
+								a->dy += 4;
+								a->dx += 4;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->dy -= 1 * time;
-								b->dx -= 1 * time;
+								b->dy -= 4;
+								b->dx -= 4;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 						}
@@ -439,7 +438,7 @@ int main()
 				}
 			}
 			zombie *a = new zombie();
-			a->settings(sRock, randW, randH, rand() % 360, 25);
+			a->settings(sRock, randW, randH, rand() % 360, 50);
 			entities.push_back(a);
 		}
 
@@ -481,7 +480,7 @@ int main()
 			}
 		}
 //upd back
-		for (int i = 0; i < mapW; i++)
+		/*for (int i = 0; i < mapW; i++)
 		{
 			for (int j = 0; j < mapH; j++)
 			{
@@ -505,40 +504,40 @@ int main()
 				app.draw(UPD);
 
 			}
-		}
+		}*/
 		//app.draw(background);
 
 		for (auto i : entities)
 			i->draw(app);
 	
 	
-		for (int i = 0; i < mapW; i++)
-		{
-			for (int j = 0; j < mapH; j++)
-			{
-				/*if (playerXpos/32== i&&playerYpos/32 == j) {
-					rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
+		//for (int i = 0; i < mapW; i++)
+		//{
+		//	for (int j = 0; j < mapH; j++)
+		//	{
+		//		/*if (playerXpos/32== i&&playerYpos/32 == j) {
+		//			rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
 
-				if (Map[i][j] == 'A') {
+		//		if (Map[i][j] == 'A') {
 
-					rectangle.setFillColor(Color::Color(0, 255, 0, 128));
+		//			rectangle.setFillColor(Color::Color(0, 255, 0, 128));
 
-				}
-				else if (Map[i][j] == 'B') {
+		//		}
+		//		else if (Map[i][j] == 'B') {
 
-					rectangle.setFillColor(Color::Cyan);
+		//			rectangle.setFillColor(Color::Cyan);
 
-				}
-				else if (Map[i][j] == ' ') 	rectangle.setFillColor(Color::Color(0, 0, 0, 128));
-				rectangle.setPosition(i * 4 + mMapX, j * 4 + mMapY);
-				app.draw(rectangle);
-			}
-
-
-			
+		//		}
+		//		else if (Map[i][j] == ' ') 	rectangle.setFillColor(Color::Color(0, 0, 0, 128));
+		//		rectangle.setPosition(i * 4 + mMapX, j * 4 + mMapY);
+		//		app.draw(rectangle);
+		//	}
 
 
-		}
+		//	
+
+
+		//}
 		app.display();
 	}
 
@@ -644,25 +643,7 @@ bool calculateDistance(Entity *a, Entity *b, weapon *c) {
 		(b->y - a->y)*(b->y - a->y)))>c->dist;
 }
 
-//void NewMapGenerator(int Breakable,int Unbreakable, Entity e) {
-//	int randomX = 0;
-//	int randomY = 0;
-//	Animation Anim();
-//	Animation Anim();
-//	for (int x = 0; x < Breakable; x++) {
-//		wall *w = new wall();
-//		randomX = rand() % 50;//Map size
-//		randomX = rand() % 50;//Map size
-//		w->settings(Anim, randomX * 32, randomY * 32, 0, 32);
-//		entities.push_back(w)
-//			for (auto a:entities) {
-//				if()
-//			}
-//	}
-//	for (int x = 0; x < Unbreakable; x++) {
-//
-//
-//
-//	}
-//
-//}
+void NewMapGenerator(int Breakable,int Unbreakable, Entity e) {
+	
+
+}

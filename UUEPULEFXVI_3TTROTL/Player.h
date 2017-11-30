@@ -9,26 +9,171 @@ class player : public Entity
 {
 public:
 	bool thrustU, thrustD, thrustL, thrustR;
+	float acc, maxSpeed, stopspeed;
+	float sf;
 	
 	player()
 	{
 		name = "player";
+		acc = 15;
+		maxSpeed = 40;
+		stopspeed = 0.8;
+		sf = 0.00000001;
 		//angle = 0;
 	}
-
+	float getAcc() {
+		return acc;
+	}
+	float getmaxSpeed() {
+		return maxSpeed;
+	
+	}
 	void update(float time)
 	{
-		if (thrustU)
+		if (thrustU&thrustR)
+		{
+			
+			if (dy > 0 || dx < 0) {
+				if (dy > 0 && dx < 0) {
+					dy *= stopspeed*1;
+					dx *= stopspeed*1;
+					dx += sf;
+					dy -= sf;
+				}
+				else if (dy > 0&&dx>0) {
+					dy *= stopspeed*1;
+					dy -= sf;
+					dx += acc*1;
+				}
+				else {
+					dx *= stopspeed*1;
+					dx += sf;
+					dy -= acc*1;
+				}
+			
+			}
+			else {
+				//dx += cos(angle*DEGTORAD)*0.2;
+				//dy += sin(angle*DEGTORAD)*0.2;
+				dy -= acc*1;
+				dx += acc*1;
+				//angle = 0;
+			}
+		}
+		else if (thrustU&thrustL)
 		{
 			//dx += cos(angle*DEGTORAD)*0.2;
 			//dy += sin(angle*DEGTORAD)*0.2;
-			dy -= 1*time;
+			if (dy>0||dx>0) {
+				if (dy > 0 && dx > 0) {
+					dy *= stopspeed*1;
+					dx *= stopspeed*1;
+					dx -= sf;
+					dy -= sf;
+				
+				}
+				else if (dy > 0&&dx<0) {
+					dy *= stopspeed*1;
+					dy -= sf;
+					dx -= acc*1;
+				}
+				else
+				{
+					dx *= stopspeed*1;
+					dx -= sf;
+					dy -= acc*1;
+				}
+
+			}
+			else {
+				dy -= acc*1;
+				dx -= acc*1;
+				//angle = 0;
+			}
+		}
+		else if (thrustD&thrustL)
+		{
+			//dx += cos(angle*DEGTORAD)*0.2;
+			//dy += sin(angle*DEGTORAD)*0.2;
+			if (dy<0||dx>0) {
+				if (dy < 0&&dx>0) {
+					dy *= stopspeed*1;
+					dx *= stopspeed*1;
+					dy += sf;
+					dx -= sf;
+				}
+				else if (dy<0 && dx>0)
+				{
+					dy *= stopspeed*1;
+					dy += sf;
+					dx -= acc*1;
+				}
+				else
+				{
+					dx *= stopspeed*1;
+					dx -= sf;
+					dy += acc*1;
+
+				}
+
+			}
+
+		else {
+			dy += acc*1;
+			dx -= acc*1;
+			//angle = 0;
+		}
+		}
+		else if (thrustD&thrustR)
+		{
+			if (dx<0||dy<0)
+			{
+				if (dx<0 && dy<0)
+				{
+					dx *= stopspeed*1;
+					dy *= stopspeed*1;
+					dx += sf;
+					dy += sf;
+				}
+				else if (dx<0 && dy>0)
+				{
+					dx *= stopspeed*1;
+					dx += sf;
+					dy += acc*1;
+				}
+				else
+				{
+					dy *= stopspeed*1;
+					dy += sf;
+					dx += acc*1;
+				}
+			}
+			//dx += cos(angle*DEGTORAD)*0.2;
+			//dy += sin(angle*DEGTORAD)*0.2;
+		else {
+			dy += acc*1;
+			dx += acc*1;
+		}
+			//angle = 0;
+		}
+		else if (thrustU)
+		{
+			if (dy > 0) {
+				dy *= stopspeed*1;
+				dy -=sf;
+				//dx += cos(angle*DEGTORAD)*0.2;
+				//dy += sin(angle*DEGTORAD)*0.2;
+			}
+			else {
+				dy -= acc*1;
+			}
+			dx *= stopspeed*1;
 			//angle = 0;
 		}
 		//else
 		//{
-		//	dx *= 0.1*time;
-		//	dy *= 0.1*time;
+		//	dx *= 0.1*1;
+		//	dy *= 0.1*1;
 		//	//angle = 0;
 		//}
 
@@ -36,156 +181,102 @@ public:
 		{
 			//dx -= cos(angle*DEGTORAD)*0.2;
 			//dy -= sin(angle*DEGTORAD)*0.2;
-			dy += 1*time;
+			if (dy < 0) {
+				dy *= stopspeed*1;
+				dy += sf;
+				//dx += cos(angle*DEGTORAD)*0.2;
+				//dy += sin(angle*DEGTORAD)*0.2;
+			}
+			else {
+				dy += acc*1;
+			}
+			dx *= stopspeed*1;
+			//angle = 0;
 			//angle = 180;
 		}
 		//else
 		//{
-		//	dx *= 0.99*time;
-		//	dy *= 0.99*time;
+		//	dx *= 0.99*1;
+		//	dy *= 0.99*1;
 		//	//angle = 0;
 		//}
 
-		else if (thrustL)
+	    else if (thrustL)
 		{
-			//dx += sin(angle*DEGTORAD)*0.2;
+			//dy -= sin(angle*DEGTORAD)*0.2;
+			if (dx > 0) {
+				dx *= stopspeed*1;
+				dx -= 0.05;
+				//dx += cos(angle*DEGTORAD)*0.2;
+				//dy += sin(angle*DEGTORAD)*0.2;
+			}
+			else {
+				dx -= acc*1;
+			}
+			dy *= stopspeed*1;//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
-			dx -= 1*time;
+			
 			//angle = -90;
 		}
 		//else
 		//{
-		//	dx *= 0.1*time;
-		//	dy *= 0.1*time;
+		//	dx *= 0.1*1;
+		//	dy *= 0.1*1;
 		//	//angle = 0;
 		//}
 
 		else if (thrustR)
 		{
-			//dx += sin(angle*DEGTORAD)*0.2;
+			if (dx < 0) {
+				dx *= stopspeed*1;
+				dx += 0.05;
+				//dx += cos(angle*DEGTORAD)*0.2;
+				//dy += sin(angle*DEGTORAD)*0.2;
+			}
+			else {
+				dx += acc*1;
+			}
+			dy *= stopspeed*1;//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
-			dx += 1*time;
+			
 			//angle = 90;
 		}
+		
 		else
 		{
-			dx = 0;
-			dy = 0;
+			dx *= stopspeed*1;
+			dy *= stopspeed*1;
+			if (dx > 0) {
+				dx -= sf;
+			}
+			if (dy > 0) {
+				dy -= sf;
+			}
+			if (dx<0)
+			{
+				dx += sf;
+			}
+			if (dy<0)
+			{
+				dy += sf;
+			}
 			//angle = 0;
 		}
 
-		int maxSpeed = 5;
+		
 		float speed = sqrt(dx*dx + dy*dy);
 		if (speed>maxSpeed)
 		{
-			dx *= maxSpeed / speed;
-			dy *= maxSpeed / speed;
+			dx*= maxSpeed/speed;
+			dy*= maxSpeed/speed;
 		}
 
-		//if (x == 0 || x <= (W / 2))
-		//{
-		//	if (offset_x == 0)
-		//	{
-		//		//x changes
-		//		x += dx;
-		//		if (x >= (W / 2)) { x = (W / 2); }
-		//	}
-		//	if (x <= 0) { x = 0; }
-
-		//}
-
-		//if (x == (W/2))
-		//{
-		//	//Offset always changes
-		//	offset_x += dx;
-
-		//	//Limit offset
-		//	if (offset_x >= maxW - (W))
-		//	{
-		//		offset_x = maxW - (W);
-		//	}
-		//	if (offset_x <= 0)
-		//	{
-		//		offset_x = 0;
-		//	}
-		//}
-		//if (x > (W / 2) || offset_x == (maxW - (W))) //set offset to limit
-		//{
-		//	offset_x = (maxW - (W));
-		//	//x changes
-		//	x += dx;
-		//	if (x >= (W)) { x = (W); } // limit x
-		//	if (x < ((W/2))) { x = ((W / 2)); }
-		//	if (x > (W / 2)) { offset_x = (maxW - W); }
-		//}
+		x += dx*time;
+		y += dy*time;
 
 
-		//if (x == (W / 2) && offset_x == (maxW - (W / 2)))
-		//{
-		//		//x changes
-		//		x += dx;
-		//		if (x >= (maxW)) { x = (maxW); } //limit x
-		//	//if (x <= 0) { x = 0; }
-		//}
-
-		//Update player position
-		//if (offset_x == 0 && dx <= 0)
-		//{
-		//	x += dx;
-		//}
-
-		//Update Offset
-		//X
-		//if (x >= 0 && x < (W / 2))
-		//{
-		//	//dont update offset but update player position
-		//	offset_x = 0;
-		//	x += dx;
-		//	if (x >= (W / 2)) { x = (W / 2); } //make sure x stays W/2 maximum
-		//}
-		//else if (offset_x >= (maxW -(W/2)))
-		//{
-		//	//update offset to  max value and change x
-		//	offset_x = maxW - (W / 2);
-		//	if (x <= maxW) 
-		//	{
-		//		x += dx;
-		//	}
-		//}
-		//Y
-
-		//Update player position on screen
-
-		//if ((x <= (maxW - (W / 2)) && x >= (W / 2))) //Increase offset 
-		//{
-		//	//offset_x = x - (W / 2);
-		//	offset_x += dx;
-		//}
-		//
-
-		//else
-		//{
-		//	x += dx;
-		//}
-	//	if ((y <= (maxH - (H / 2)) && y > (H / 2)))
-	//	{
-	//		offset_y = y - (H / 2);
-	//	}
-	//	else 
-	//	{ 
-			y += dy;
-	//	}
-
-	//	if (x>maxW) x = 0; if (x<0) x = maxW;
-	//	if (y>maxH) y = 0; if (y<0) y = maxH;
-
-			if (x>maxW) x = maxW;  if (x<0) x = 0;
-			if (y>maxH) y = maxH;  if (y<0) y = 0;
-
-			y += dy;
-			x += dx;
-
-			offsetEntities(dx, dy);
+		if (x>W) x = 0; if (x<0) x = W;
+		if (y>H) y = 0; if (y<0) y = H;
 	}
 
 	int getXlocation() { return x; };

@@ -11,6 +11,7 @@ public:
 	bool life;
 	std::string name;
 	Animation anim;
+	float xpos, ypos;
 
 	Entity()
 	{

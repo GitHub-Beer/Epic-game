@@ -10,15 +10,16 @@ class player : public Entity
 public:
 	bool thrustU, thrustD, thrustL, thrustR;
 	float acc, maxSpeed, stopspeed;
-	float sf;
+	float sf, hp;
 	
 	player()
 	{
 		name = "player";
 		acc = 15;
 		maxSpeed = 40;
-		stopspeed = 0.8;
+		stopspeed = 0.9;
 		sf = 0.00000001;
+		hp = 1000;
 		//angle = 0;
 	}
 	float getAcc() {
@@ -274,9 +275,10 @@ public:
 		x += dx*time;
 		y += dy*time;
 
-
-		if (x>W) x = 0; if (x<0) x = W;
-		if (y>H) y = 0; if (y<0) y = H;
+		if (x < 0)x = 0; if (x > 1600)x = 1600;
+		if (y < 0)y = 0; if (x > 1600)x = 1600;
+		//if (x>W) x = 0; if (x<0) x = W;
+		//if (y>H) y = 0; if (y<0) y = H;
 	}
 
 	int getXlocation() { return x; };

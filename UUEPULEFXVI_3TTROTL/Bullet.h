@@ -6,9 +6,12 @@
 class bullet : public Entity
 {
 public:
+	
 	bullet()
 	{
 		name = "bullet";
+		xpos=x;
+		ypos=y;
 	}
 
 	void  update(float time)
@@ -19,7 +22,7 @@ public:
 		x += dx;
 		y += dy;
 
-		if (x>W || x<0 || y>H || y<0) life = 0;
+		//if (x>W || x<0 || y>H || y<0) life = 0;
 	}
 
 };

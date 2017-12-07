@@ -10,6 +10,7 @@ class zombie : public Entity
 {
 public:
 	float maxSpeed, acc;
+	float zlife;
 
 
 	zombie()
@@ -96,8 +97,8 @@ public:
 		x += dx*time;
 		y += dy*time;
 
-		if (x>W) x = 0;  if (x<0) x = W;
-		if (y>H) y = 0;  if (y<0) y = H;
+		//if (x>W) x = 0;  if (x<0) x = W;
+		//if (y>H) y = 0;  if (y<0) y = H;
 	}
 
 };

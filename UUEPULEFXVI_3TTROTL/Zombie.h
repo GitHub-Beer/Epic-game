@@ -94,11 +94,13 @@ public:
 			dx *= maxSpeed / speed;
 			dy *= maxSpeed / speed;
 		}
-		x += dx*time;
-		y += dy*time;
+	x += dx*time*.5;
+		y += dy*time*.5 ;
+
 
 		//if (x>W) x = 0;  if (x<0) x = W;
 		//if (y>H) y = 0;  if (y<0) y = H;
+
 	}
 
 };

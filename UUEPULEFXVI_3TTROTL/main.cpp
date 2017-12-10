@@ -31,6 +31,9 @@ void updateMouseAngle(sf::Vector2i); // This is for making Player point towards 
 void generateMap(int mapType); //Map generator
 float getPlayerX();
 float getPlayerY();
+bool isCollide(Entity *a, Entity *b);
+void offsetEntities(int howMuchX, int howMuchY);
+bool isOutsideMap(int howMuchX, int howMuchY);
 
 
 
@@ -43,22 +46,38 @@ float getPlayerY();
 #include "Player.h"
 #include "Walls.h"
 #include "Zombie.h"
-#include "Weapon.h"
+#include "PassableWall.h"
+
+
+
 
 bool isCollide(Entity *a, Entity *b);
 bool calculateDistance(Entity *b, weapon *c);
 int updZombieLife(float time);
+
 //global variable
 float playerX;
 float playerY;
-sf::String Map[50][50];
+//sf::String Map[50][50];
+int gameState[maxW][maxH]; //Stores the information of entities in map at location W and H , buffer is outside area
+						   /*
+						   0 = nothing
+						   1 = Pickup
+						   2 = Zombie
+						   3 = Bullet
+						   4 = Player
+						   5 = Wall
+						   6 = Passable wall or grass
+						   7 = Breakable wall
+						   */
 
-//extern int getXlocation(), getYlocation();//player location
+						   //extern int getXlocation(), getYlocation();//player location
 std::list<Entity*> entities; //Entities
 
+							 //std::list<Entity*> entities;
 
 
-//main
+							 //main
 int main()
 
 {
@@ -72,6 +91,20 @@ int main()
 	int zlcoef = 1;
 	srand(time(0));
 	// Load the font from a file
+
+	sf::Font font;
+	if (!font.loadFromFile("fonts/BRADHITC.ttf"))
+	{
+		// error...
+	}
+	sf::Text text;
+
+	// select the font
+	text.setFont(font);
+	text.setCharacterSize(28);
+	text.setColor(sf::Color::Red);
+	text.setStyle(sf::Text::Bold);
+
 	//sf::Font MyFont;
 	//if (!MyFont.loadFromFile("/fonts/verdana.ttf"))
 	//{
@@ -82,10 +115,12 @@ int main()
 	//Log
 	//Log.setSize(50);
 
+
 	RenderWindow app(VideoMode(W, H), "The third return of the legend!");
 	View Vv;
 	
 	//app.setFramerateLimit(120);
+
 	/*float angleModifier[100] = { 0,1.1,-1.2,5.2,-5,6,7,8,9,10,
 								1,2,3,4,5,6,7,8,9,10,
 								1,2,3,4,5,6,7,8,9,10,
@@ -97,7 +132,7 @@ int main()
 								1,2,3,4,5,6,7,8,9,10,
 								1,2,3,4,5,6,7,8,9,10 };*/
 	
-		Texture t1, t2, t3, t4, t5, t6, t7, t8, t9;
+	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9, t11, t12, t13;
 		t1.loadFromFile("images/Player_top.png");
 		t2.loadFromFile("images/background.png");
 		t3.loadFromFile("images/explosions/enemy_die.png");
@@ -108,6 +143,11 @@ int main()
 		t8.loadFromFile("images/LEG_ANIM1.png");
 		///
 		t9.loadFromFile("images/background/bcg.png");
+  	t11.loadFromFile("images/background/grass.png");
+  	t12.loadFromFile("images/background/stone.png");
+	  t13.loadFromFile("images/background/bushes.png");
+  
+  
 
 
 		Sprite BCG(t9);
@@ -118,12 +158,13 @@ int main()
 	//RectangleShape rect(Ve;
 	t1.setSmooth(true);
 	t2.setSmooth(true);
-	
+
 
 
 	RectangleShape rectangle(Vector2f(4, 4));
+	RectangleShape rectangle1(Vector2f(200, 200));
 	int mMapX = 1000;
-	int mMapY = 650;
+	int mMapY = 500;
 
 	//Sprite background(t2);
 
@@ -136,6 +177,18 @@ int main()
 	//Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
 	Animation sPlayer_go(t1, 0, 0, 57, 99, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
+//MERGEFIX ----------
+	Animation sLeg(t1, 0, 0, 57, 99, 1, 0);
+
+	//Background entities
+	Animation bGrass(t11, 0, 0, 32, 32, 1, 0);
+	Animation bStone(t12, 0, 0, 32, 32, 1, 0);
+	Animation bBushes(t13, 0, 0, 32, 32, 1, 0);
+
+	SoundBuffer buffer;
+	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
+	Sound sound(buffer);
+
 	Animation sLeg(t8, 0, 0, 120, 120, 3, 0.05);
 	SoundBuffer buffer;
 	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
@@ -144,16 +197,49 @@ int main()
 	buf.loadFromFile("Jump.ogg");
 	Sound sou(buf);
 	Music music;
-    music.openFromFile("Mario_Theme.ogg");
-    music.play();
+	music.openFromFile("Mario_Theme.ogg");
+	music.play();
 
-
-	std::list<Entity*> entities;
+//MERGEFIX ----------
 
 
 
 	int randW, randH;
 
+	//Generate Map
+	generateMap(0);
+	//generateMap(0);
+
+	Sprite background(t2);
+
+	//Make map entities
+	for (int i = 0; i < maxW; i++)
+	{
+		for (int j = 0; j < maxW; j++)
+		{
+			if (i % 32 == 0 && j % 32 == 0) {
+				if (gameState[i][j] == '0') { //TODO: account for sprite image size
+											  //grass *g = new grass();
+											  ////a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);//Zombie 
+
+											  //g->settings(bGrass, i, j, 1, 25);
+											  ///*	a->settings(sRock, 0, rand() % H, rand() % 360, 25);*/
+											  //entities.push_back(g);
+				}
+				if (gameState[i][j] == '5') {
+					wall *w = new wall();
+					w->settings(bStone, i, j, 0, 25);//wall
+					entities.push_back(w);
+
+				}
+				else if (gameState[i][j] == '6') {
+					p_wall *pw = new p_wall();
+					pw->settings(bBushes, i, j, 0, 25);//wall 
+					entities.push_back(pw);
+				}
+			}
+		}
+	}
 
 	float zoom = 0.1;
 	float angle1=0.1;
@@ -168,13 +254,13 @@ int main()
 			{
 				std::uniform_int_distribution<> distr(-200, 0); // define the range
 				randW = distr(eng);
-				randH = rand() % H;
+				randH = rand() % maxH;
 			}
 			else
 			{
-				std::uniform_int_distribution<> distr(W, W + 200); // define the range
+				std::uniform_int_distribution<> distr(maxW, maxW + 200); // define the range
 				randW = distr(eng);
-				randH = rand() % H;
+				randH = rand() % maxH;
 			}
 		}
 		else
@@ -183,13 +269,13 @@ int main()
 			{
 				std::uniform_int_distribution<> distr(-200, 0); // define the range
 				randH = distr(eng);
-				randW = rand() % W;
+				randW = rand() % maxW;
 			}
 			else
 			{
 				std::uniform_int_distribution<> distr(H, H + 200); // define the range
 				randH = distr(eng);
-				randW = rand() % W;
+				randW = rand() % maxW;
 			}
 		}
 
@@ -200,18 +286,35 @@ int main()
 	}
 
 	player *p = new player();
-	p->settings(sPlayer, W/2, H/2, 0, 20);
+	p->settings(sPlayer, W / 2 , H / 2, 0, 20);
 	entities.push_back(p);
-	
+
 	////////////////////////////
-	generateMap(1);
+	//generateMap(1);
 	/////main loop/////
 	Clock clock;
 	float time = 0;
+
+
+
+	//for (auto i : entities) {
+	//	//if (i->name != "player")
+	//	//{
+	//		i->x -= -160;
+	//		i->y -= -440;
+	//	//	offset_x += howMuchX;
+	//	//	offset_y += howMuchY;
+	//	//}
+	//}
+
+	//offsetEntities(-(maxW/2 - W/2), (maxH/2 - H/2));
+
+
 	float gTime = 0;//time of the game
 	weapon *w = new weapon();
 	w->weaponSetup("weap_deserteagle_slmn_2.wav", 500, 5, 1, 20, 50, 500);
 	entities.push_back(w);
+
 	while (app.isOpen())
 	{
 		time = clock.getElapsedTime().asMilliseconds();
@@ -219,16 +322,22 @@ int main()
 		gTime += time;
 		time = time / 100;
 		if (time > 50) time = 50;
-		
+
 		Event event;
 		while (app.pollEvent(event))
 		{
 			if (event.type == Event::Closed)
 				app.close();
 
-			if (event.type == Event::KeyPressed)
-				if (event.key.code == Keyboard::Space)
+			if (event.type == Event::MouseButtonPressed)
+				if (event.key.code == Mouse::Left)
 				{
+
+				//bullet *b = new bullet();
+				//	sound.play();
+				//	b->settings(sBullet, p->x, p->y, p->angle, 10);
+				//	entities.push_back(b);
+
 				if (w->canshoot(time) /*&& w->currammo>0*/) {
 						for (int i = 0; i < rand() % w->spt; i++) {
 							bullet *b = new bullet();
@@ -243,8 +352,8 @@ int main()
 						w->counter_spm = 0;
 					}
 				
-				}
 
+				}
 		}
 		if (gTime>60000) {
 			zlcoef = updZombieLife(gTime);
@@ -308,7 +417,7 @@ int main()
 
 						Entity *e = new Entity();
 
-						e->settings(sExplosion, a->x, a->y, a->angle,1);
+						e->settings(sExplosion, a->x, a->y, a->angle, 1);
 
 						e->name = "explosion";
 						sou.play();
@@ -330,7 +439,7 @@ int main()
 						b->life = false;
 
 						Entity *e = new Entity();
-						e->settings(sExplosion_ship, a->x, a->y,0,1);
+						e->settings(sExplosion_ship, a->x, a->y, 0, 1);
 						e->name = "explosion";
 						entities.push_back(e);
 
@@ -346,22 +455,22 @@ int main()
 						{
 							if (rand() % 2 == 0)//It goes bot left or top right,
 							{
-								a->y -= 4;
-								a->x += 4;
+								a->y -= 1;
+								a->x += 1;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->y += 4;
-								b->x -= 4;
+								b->y -= 1;
+								b->x += 1;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 							else
 							{
-								a->y += 4;
-								a->x -= 4;
+								a->y += 1;
+								a->x -= 1;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->y -= 4;
-								b->x += 4;
+								b->y += 1;
+								b->x -= 1;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 						} // a zombie
@@ -369,27 +478,28 @@ int main()
 						{
 							if (rand() % 2 == 0)//It goes top left or bot right,
 							{
-								a->y-= 4;
-								a->x-= 4;
+								a->dy += 1 * time;
+								a->dx += 1 * time;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->y += 4;
-								b->x += 4;
+								b->dy += 1 * time;
+								b->dx += 1 * time;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 							else
 							{
-								a->dy += 4;
-								a->dx += 4;
+								a->dy -= 1 * time;
+								a->dx -= 1 * time;
 								a->angle = atan2(playerX - a->x, a->y - playerY) * 180 / 3.14 + 180;
 
-								b->dy -= 4;
-								b->dx -= 4;
+								b->dy -= 1 * time;
+								b->dx -= 1 * time;
 								b->angle = atan2(playerX - b->x, b->y - playerY) * 180 / 3.14 + 180;
 							}
 						}
 
 					}
+
 				////////////////////delete bulletts after distance
 				/*if (a->name == "player"&&b->name == "bullet") {
 					if (calculateDistance(a,b,w)) {
@@ -397,6 +507,7 @@ int main()
 					}
 				
 				}*/
+
 			}
 
 
@@ -443,8 +554,10 @@ int main()
 				}
 			}
 			zombie *a = new zombie();
+
 			a->settings(sRock, randW, randH, rand() % 360, 50);
 			
+
 			entities.push_back(a);
 		}
 
@@ -453,6 +566,7 @@ int main()
 			Entity *e = *i;
 
 			e->update(time);
+
 			e->anim.update(time);
 
 			//Update player x and y location global variable
@@ -460,8 +574,24 @@ int main()
 			{
 				playerX = e->x;
 				playerY = e->y;
+				//if ((e->x <= (maxW - (W / 2)) && e->x > (W / 2)))
+				//{
+				//	offset_x = e->x - (W / 2);
+				//}
+				//if ((e->y <= (maxH - (H / 2)) && e->y > (H / 2)))
+				//{
+				//	offset_y = e->y - (H / 2);
+				//}
 
 			}
+
+			if (e->name != "player" && e->name != "zombie")
+			{
+				//e->x -= offset_x;
+				//e->y -= offset_y;	
+
+			}
+
 			if (e->name == "bullet") {
 				if (calculateDistance(e, w)) {
 					e->life = false;
@@ -472,48 +602,80 @@ int main()
 			else i++;
 		}
 
+		app.draw(background);
 
+		//Change location based on offset
+		//for (auto i = entities.begin(); i != entities.end();)
+		//{
+		//	Entity *e = *i;
+		//	if (e->name != "player")
+		//
+		//}
 
 		//////draw//////
 
 		//Grass Background//
+		//
+		//		for (int i = 0; i< mapW; i++)
+		//		{
+		//			for (int j = 0; j < mapH; j++)
+		//			{
+		//
+		//				BCG.setTextureRect(IntRect(0, 0, 32, 32));
+		//
+		//				BCG.setPosition(i * 32, j * 32);
+		//				app.draw(BCG);
+		//			}
+		//		}
+		////upd back
+		//		for (int i = 0; i < mapW; i++)
+		//		{
+		//			for (int j = 0; j < mapH; j++)
+		//			{
+		//
+		//				if (Map[i][j] == 'A') {
+		//
+		//					UPD.setTextureRect(IntRect(32, 0, 32, 32));
+		//
+		//
+		//				}
+		//				else if (Map[i][j] == 'B') {
+		//
+		//
+		//					UPD.setTextureRect(IntRect(64, 0, 32, 32));
+		//
+		//
+		//				}
+		//				else if (Map[i][j] == ' ') continue;
+		//
+		//				UPD.setPosition(i * 32, j * 32);
+		//				app.draw(UPD);
+		//
+		//			}
+		//		}
+		//		//app.draw(background);
 
-		for (int i = 0; i< mapW; i++)
-		{
-			for (int j = 0; j < mapH; j++)
-			{
+		for (auto i : entities)
+			i->draw(app);
 
-				BCG.setTextureRect(IntRect(0, 0, 32, 32));
 
-				BCG.setPosition(i * 32, j * 32);
-				app.draw(BCG);
+		rectangle1.setFillColor(Color::Color(0, 0, 0, 128));
+		rectangle1.setPosition(mMapX, mMapY);
+		app.draw(rectangle1);
+
+		for (auto i : entities) {
+
+			/*if (playerXpos/32== i&&playerYpos/32 == j) {
+			rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
+
+			if (i->name == "p_wall") {
+
+				rectangle.setFillColor(Color::Color(0, 255, 0, 128));
+
 			}
-		}
-//upd back
-		/*for (int i = 0; i < mapW; i++)
-		{
-			for (int j = 0; j < mapH; j++)
-			{
 
-				if (Map[i][j] == 'A') {
+			else if (i->name == "zombie") {
 
-					UPD.setTextureRect(IntRect(32, 0, 32, 32));
-
-
-				}
-				else if (Map[i][j] == 'B') {
-
-
-					UPD.setTextureRect(IntRect(64, 0, 32, 32));
-
-
-				}
-				else if (Map[i][j] == ' ') continue;
-
-				UPD.setPosition(i * 32, j * 32);
-				app.draw(UPD);
-
-			}
 		}*/
 		//app.draw(background);
 
@@ -528,24 +690,33 @@ int main()
 		//		/*if (playerXpos/32== i&&playerYpos/32 == j) {
 		//			rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
 
-		//		if (Map[i][j] == 'A') {
 
-		//			rectangle.setFillColor(Color::Color(0, 255, 0, 128));
+				rectangle.setFillColor(Color::Cyan);
 
-		//		}
-		//		else if (Map[i][j] == 'B') {
+			}
+			else if (i->name == "bullet") {
 
-		//			rectangle.setFillColor(Color::Cyan);
+				rectangle.setFillColor(Color::Blue);
 
-		//		}
-		//		else if (Map[i][j] == ' ') 	rectangle.setFillColor(Color::Color(0, 0, 0, 128));
-		//		rectangle.setPosition(i * 4 + mMapX, j * 4 + mMapY);
-		//		app.draw(rectangle);
-		//	}
+			}
+			else if (i->name == "player") {
 
+				rectangle.setFillColor(Color::Red);
 
+			}
+			else if (i->name == "wall") 	rectangle.setFillColor(Color::Color(0, 0, 0, 128));
+			rectangle.setPosition((i->x / 32) * 4 + mMapX, (i->y / 32) * 4 + mMapY);
+			app.draw(rectangle);
+		}
+
+		//}
 		//	
 
+
+
+		//}		
+		text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
+		app.draw(text);
 
 		//}
 		if (p->y < 400 || p->x < 600) {
@@ -583,6 +754,7 @@ int main()
 		zoom += 0.1*time;
 		if (zoom > 5) zoom=0.1;
 		app.setView(Vv);
+
 		app.display();
 	}
 
@@ -616,33 +788,84 @@ int main()
 //		break;
 //	}
 //
-void generateMap(int mapType) {
-	int x;
-	for (int i = 0; i < mapW; i++)
-	{
-		x = rand() % 70;
+//void generateMap(int mapType) {
+//	int x;
+//	for (int i = 0; i < mapW; i++)
+//	{
+//		x = rand() % 70;
+//
+//		for (int j = 0; j < mapH; j++)
+//		{
+//			x = rand() % 70;
+//
+//			if (x == 60) {
+//				Map[i][j] = 'A';
+//
+//			}
+//
+//			/*else*/ if (x == 26) {
+//				Map[i][j] = 'B';
+//			}
+//			else if (x != 26 && x != 60)
+//			{
+//				Map[i][j] = ' ';
+//			}
+//		}
+//	}
+//}
 
-		for (int j = 0; j < mapH; j++)
+void offsetEntities(int howMuchX, int howMuchY)
+{
+	for (auto i : entities) {
+		if (i->name != "player")
 		{
-			x = rand() % 70;
-
-			if (x == 60) {
-				Map[i][j] = 'A';
-
-			}
-
-			/*else*/ if (x == 26) {
-				Map[i][j] = 'B';
-			}
-			else if (x != 26 && x != 60)
-			{
-				Map[i][j] = ' ';
-			}
+			i->x -= howMuchX;
+			i->y -= howMuchY;
+			offset_x += howMuchX;
+			offset_y += howMuchY;
 		}
 	}
 }
 
+bool isOutsideMap(int howMuchX, int howMuchY)
+{
+	//for (auto i : entities)
+	//{
+	//	if ((i->x + howMuchX) < 0 || i->x + howMuchX > maxW
+	//		|| i->y + howMuchY < 0 || i->y + howMuchY > maxH)
+	//	{
+			return true;
+	//	}
+	//	else return false;
+	//}
+}
 
+void generateMap(int mapType) {
+	int x;
+	for (int i = 0; i < maxW; i++)
+	{
+		x = rand() % 70;
+
+		for (int j = 0; j < maxH; j++)
+		{
+			x = rand() % 70;
+
+			if (x == 60) {
+				gameState[i][j] = '5';
+
+			}
+
+			/*else*/ if (x == 26) {
+				gameState[i][j] = '6';
+
+			}
+			else if (x != 26 && x != 60)
+			{
+				gameState[i][j] = '0';
+			}
+		}
+	}
+}
 
 bool isCollide(Entity *a, Entity *b)
 {
@@ -683,6 +906,7 @@ bool isTooClose(float xPos, float yPos)
 
 float getPlayerX() { return playerX; }
 float getPlayerY() { return playerY; }
+
 bool calculateDistance(Entity *b, weapon *c) {
 	return abs(sqrt((b->x - b->xpos)*(b->x - b->xpos) +
 		(b->y - b->ypos)*(b->y - b->ypos)))>c->dist;
@@ -695,3 +919,4 @@ void NewMapGenerator(int Breakable,int Unbreakable, Entity e) {
 int updZombieLife(float time) {
 	return  int(time / 60000);
 }
+

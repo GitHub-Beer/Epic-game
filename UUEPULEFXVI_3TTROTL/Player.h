@@ -272,13 +272,22 @@ public:
 			dy*= maxSpeed/speed;
 		}
 
-		x += dx*time;
-		y += dy*time;
+		//x += dx;
+		//y += dy;
+
+
+
+		//if (x>maxW) x = maxW; if (x<0) x = 0;
+		//if (y>maxH) y = maxH; if (y<0) y = 0;
+		//if (isOutsideMap(dx*time, dy*time)) {
+			offsetEntities(dx*time, dy*time);
+		//}
 
 		if (x < 0)x = 0; if (x > 1600)x = 1600;
 		if (y < 0)y = 0; if (x > 1600)x = 1600;
 		//if (x>W) x = 0; if (x<0) x = W;
 		//if (y>H) y = 0; if (y<0) y = H;
+
 	}
 
 	int getXlocation() { return x; };

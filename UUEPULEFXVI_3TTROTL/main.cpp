@@ -49,6 +49,12 @@ bool isOutsideMap(int howMuchX, int howMuchY);
 #include "PassableWall.h"
 
 
+
+
+bool isCollide(Entity *a, Entity *b);
+bool calculateDistance(Entity *b, weapon *c);
+int updZombieLife(float time);
+
 //global variable
 float playerX;
 float playerY;
@@ -82,9 +88,10 @@ int main()
 
 	double mouseXpos, mouseYpos, mouseAngle;
 	sf::Vector2f curPos;
-
+	int zlcoef = 1;
 	srand(time(0));
 	// Load the font from a file
+
 	sf::Font font;
 	if (!font.loadFromFile("fonts/BRADHITC.ttf"))
 	{
@@ -98,31 +105,56 @@ int main()
 	text.setColor(sf::Color::Red);
 	text.setStyle(sf::Text::Bold);
 
+	//sf::Font MyFont;
+	//if (!MyFont.loadFromFile("/fonts/verdana.ttf"))
+	//{
+	//	// Error...
+	//}
+	//sf::String Log;
+	//Log = "Hello";
+	//Log
+	//Log.setSize(50);
+
+
 	RenderWindow app(VideoMode(W, H), "The third return of the legend!");
+	View Vv;
+	
 	//app.setFramerateLimit(120);
 
-
+	/*float angleModifier[100] = { 0,1.1,-1.2,5.2,-5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10,
+								1,2,3,4,5,6,7,8,9,10 };*/
+	
 	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9, t11, t12, t13;
-	t1.loadFromFile("images/Player_top.png");
-	t2.loadFromFile("images/background.png");
-	t3.loadFromFile("images/explosions/enemy_die.png");
-	t4.loadFromFile("images/enemy_move.png");
-	t5.loadFromFile("images/fire_red.png");
-	t6.loadFromFile("images/rock_small.png");
-	t7.loadFromFile("images/explosions/type_B.png");
-	t8.loadFromFile("images/LEG_ANIM1.png");
-	///
-	t9.loadFromFile("images/background/bcg.png");
-	t11.loadFromFile("images/background/grass.png");
-	t12.loadFromFile("images/background/stone.png");
-	t13.loadFromFile("images/background/bushes.png");
+		t1.loadFromFile("images/Player_top.png");
+		t2.loadFromFile("images/background.png");
+		t3.loadFromFile("images/explosions/enemy_die.png");
+		t4.loadFromFile("images/enemy_move.png");
+		t5.loadFromFile("images/fire_red.png");
+		t6.loadFromFile("images/rock_small.png");
+		t7.loadFromFile("images/explosions/type_B.png");
+		t8.loadFromFile("images/LEG_ANIM1.png");
+		///
+		t9.loadFromFile("images/background/bcg.png");
+  	t11.loadFromFile("images/background/grass.png");
+  	t12.loadFromFile("images/background/stone.png");
+	  t13.loadFromFile("images/background/bushes.png");
+  
+  
 
 
-	Sprite BCG(t9);
-	Sprite UPD(t9);
+		Sprite BCG(t9);
+		Sprite UPD(t9);
 
 
-
+	
 	//RectangleShape rect(Ve;
 	t1.setSmooth(true);
 	t2.setSmooth(true);
@@ -137,7 +169,7 @@ int main()
 	//Sprite background(t2);
 
 	Animation sExplosion(t3, 0, 0, 120.5, 73, 6, 0.1);
-	Animation sRock(t4, 0, 0, 120.5, 53, 6, 0.1);
+	Animation sRock(t4, 0, 0, 120.5, 53, 6, 0.02);
 	Animation sRock_small(t6, 0, 0, 64, 64, 16, 0.2);
 	Animation sBullet(t5, 0, 0, 32, 64, 16, 0.8);
 
@@ -145,6 +177,7 @@ int main()
 	//Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
 	Animation sPlayer_go(t1, 0, 0, 57, 99, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
+//MERGEFIX ----------
 	Animation sLeg(t1, 0, 0, 57, 99, 1, 0);
 
 	//Background entities
@@ -155,6 +188,11 @@ int main()
 	SoundBuffer buffer;
 	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
 	Sound sound(buffer);
+
+	Animation sLeg(t8, 0, 0, 120, 120, 3, 0.05);
+	SoundBuffer buffer;
+	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
+//	Sound DE(buffer);
 	SoundBuffer buf;
 	buf.loadFromFile("Jump.ogg");
 	Sound sou(buf);
@@ -162,7 +200,7 @@ int main()
 	music.openFromFile("Mario_Theme.ogg");
 	music.play();
 
-
+//MERGEFIX ----------
 
 
 
@@ -203,8 +241,8 @@ int main()
 		}
 	}
 
-
-
+	float zoom = 0.1;
+	float angle1=0.1;
 	for (int i = 0; i<15; i++)
 	{
 		zombie *a = new zombie();
@@ -258,6 +296,7 @@ int main()
 	float time = 0;
 
 
+
 	//for (auto i : entities) {
 	//	//if (i->name != "player")
 	//	//{
@@ -270,10 +309,17 @@ int main()
 
 	//offsetEntities(-(maxW/2 - W/2), (maxH/2 - H/2));
 
+
+	float gTime = 0;//time of the game
+	weapon *w = new weapon();
+	w->weaponSetup("weap_deserteagle_slmn_2.wav", 500, 5, 1, 20, 50, 500);
+	entities.push_back(w);
+
 	while (app.isOpen())
 	{
 		time = clock.getElapsedTime().asMilliseconds();
 		clock.restart();
+		gTime += time;
 		time = time / 100;
 		if (time > 50) time = 50;
 
@@ -286,13 +332,32 @@ int main()
 			if (event.type == Event::MouseButtonPressed)
 				if (event.key.code == Mouse::Left)
 				{
-					bullet *b = new bullet();
-					sound.play();
-					b->settings(sBullet, p->x, p->y, p->angle, 10);
-					entities.push_back(b);
+
+				//bullet *b = new bullet();
+				//	sound.play();
+				//	b->settings(sBullet, p->x, p->y, p->angle, 10);
+				//	entities.push_back(b);
+
+				if (w->canshoot(time) /*&& w->currammo>0*/) {
+						for (int i = 0; i < rand() % w->spt; i++) {
+							bullet *b = new bullet();
+							b->settings(sBullet, p->x, p->y, p->angle -45+rand()%90, 10);
+							b->xpos = p->x;
+							b->ypos=p->y;
+							entities.push_back(b);
+						}
+   						//DE.play();
+						
+						w->currammo--;
+						w->counter_spm = 0;
+					}
+				
+
 				}
 		}
-
+		if (gTime>60000) {
+			zlcoef = updZombieLife(gTime);
+		}
 		//Angle Update
 		// This is for making Player point towards Mouse
 		//	double dX =  Mouse::getPosition().x; // x and y are global Varibales declared outside
@@ -434,6 +499,15 @@ int main()
 						}
 
 					}
+
+				////////////////////delete bulletts after distance
+				/*if (a->name == "player"&&b->name == "bullet") {
+					if (calculateDistance(a,b,w)) {
+						b->life = false;
+					}
+				
+				}*/
+
 			}
 
 
@@ -480,7 +554,10 @@ int main()
 				}
 			}
 			zombie *a = new zombie();
-			a->settings(sRock, randW, randH, rand() % 360, 25);
+
+			a->settings(sRock, randW, randH, rand() % 360, 50);
+			
+
 			entities.push_back(a);
 		}
 
@@ -507,12 +584,20 @@ int main()
 				//}
 
 			}
+
 			if (e->name != "player" && e->name != "zombie")
 			{
 				//e->x -= offset_x;
 				//e->y -= offset_y;	
 
 			}
+
+			if (e->name == "bullet") {
+				if (calculateDistance(e, w)) {
+					e->life = false;
+				}
+			}
+
 			if (e->life == false) { i = entities.erase(i); delete e; }
 			else i++;
 		}
@@ -588,7 +673,23 @@ int main()
 				rectangle.setFillColor(Color::Color(0, 255, 0, 128));
 
 			}
+
 			else if (i->name == "zombie") {
+
+		}*/
+		//app.draw(background);
+
+		for (auto i : entities)
+			i->draw(app); 
+	
+	
+		//for (int i = 0; i < mapW; i++)
+		//{
+		//	for (int j = 0; j < mapH; j++)
+		//	{
+		//		/*if (playerXpos/32== i&&playerYpos/32 == j) {
+		//			rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
+
 
 				rectangle.setFillColor(Color::Cyan);
 
@@ -612,9 +713,48 @@ int main()
 		//	
 
 
+
 		//}		
 		text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
 		app.draw(text);
+
+		//}
+		if (p->y < 400 || p->x < 600) {
+			if (p->y < 400 && p->x < 600) {
+				Vv.setCenter(600, 400);
+			}
+			else if (p->y < 400) {
+				Vv.setCenter(p->x, 400);
+			}
+			else if (p->x <600) {
+				Vv.setCenter(600, p->y);
+			}
+
+		}
+		else if (p->x > 1000 || p->y > 1200) {
+			if (p->x > 1000 && p->y > 1200) {
+				Vv.setCenter(1000, 1200);
+			}
+			else if (p->x > 1000) {
+				Vv.setCenter(1000, p->y);
+			}
+			else if (p->y > 1200) {
+				Vv.setCenter(p->x, 1200);
+			}
+		}
+		else {
+			Vv.setCenter(p->x, p->y);
+		}
+
+		Vv.setSize(W, H);
+		//Vv.zoom(zoom);
+		//aaaVv.setRotation(angle1);
+		angle1 += 6*time;
+		if (angle1 > 360) angle1 = 0.1;
+		zoom += 0.1*time;
+		if (zoom > 5) zoom=0.1;
+		app.setView(Vv);
+
 		app.display();
 	}
 
@@ -766,4 +906,17 @@ bool isTooClose(float xPos, float yPos)
 
 float getPlayerX() { return playerX; }
 float getPlayerY() { return playerY; }
+
+bool calculateDistance(Entity *b, weapon *c) {
+	return abs(sqrt((b->x - b->xpos)*(b->x - b->xpos) +
+		(b->y - b->ypos)*(b->y - b->ypos)))>c->dist;
+}
+
+void NewMapGenerator(int Breakable,int Unbreakable, Entity e) {
+	
+
+}
+int updZombieLife(float time) {
+	return  int(time / 60000);
+}
 

@@ -47,6 +47,7 @@ bool isOutsideMap(int howMuchX, int howMuchY);
 #include "Walls.h"
 #include "Zombie.h"
 #include "PassableWall.h"
+#include "Weapon.h"
 
 
 
@@ -117,7 +118,7 @@ int main()
 
 
 	RenderWindow app(VideoMode(W, H), "The third return of the legend!");
-	View Vv;
+	//View Vv;
 	
 	//app.setFramerateLimit(120);
 
@@ -178,7 +179,7 @@ int main()
 	Animation sPlayer_go(t1, 0, 0, 57, 99, 1, 0);
 	Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
 //MERGEFIX ----------
-	Animation sLeg(t1, 0, 0, 57, 99, 1, 0);
+	//Animation sLeg(t1, 0, 0, 57, 99, 1, 0);
 
 	//Background entities
 	Animation bGrass(t11, 0, 0, 32, 32, 1, 0);
@@ -190,7 +191,7 @@ int main()
 	Sound sound(buffer);
 
 	Animation sLeg(t8, 0, 0, 120, 120, 3, 0.05);
-	SoundBuffer buffer;
+//	SoundBuffer buffer;
 	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
 //	Sound DE(buffer);
 	SoundBuffer buf;
@@ -676,7 +677,7 @@ int main()
 
 			else if (i->name == "zombie") {
 
-		}*/
+		}
 		//app.draw(background);
 
 		for (auto i : entities)
@@ -691,10 +692,10 @@ int main()
 		//			rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
 
 
-				rectangle.setFillColor(Color::Cyan);
+				//rectangle.setFillColor(Color::Cyan);
 
-			}
-			else if (i->name == "bullet") {
+			//}
+			/*else*/ if (i->name == "bullet") {
 
 				rectangle.setFillColor(Color::Blue);
 
@@ -718,42 +719,42 @@ int main()
 		text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
 		app.draw(text);
 
+		////}
+		//if (p->y < 400 || p->x < 600) {
+		//	if (p->y < 400 && p->x < 600) {
+		//		Vv.setCenter(600, 400);
+		//	}
+		//	else if (p->y < 400) {
+		//		Vv.setCenter(p->x, 400);
+		//	}
+		//	else if (p->x <600) {
+		//		Vv.setCenter(600, p->y);
+		//	}
+
 		//}
-		if (p->y < 400 || p->x < 600) {
-			if (p->y < 400 && p->x < 600) {
-				Vv.setCenter(600, 400);
-			}
-			else if (p->y < 400) {
-				Vv.setCenter(p->x, 400);
-			}
-			else if (p->x <600) {
-				Vv.setCenter(600, p->y);
-			}
+		//else if (p->x > 1000 || p->y > 1200) {
+		//	if (p->x > 1000 && p->y > 1200) {
+		//		Vv.setCenter(1000, 1200);
+		//	}
+		//	else if (p->x > 1000) {
+		//		Vv.setCenter(1000, p->y);
+		//	}
+		//	else if (p->y > 1200) {
+		//		Vv.setCenter(p->x, 1200);
+		//	}
+		//}
+		//else {
+		//	Vv.setCenter(p->x, p->y);
+		//}
 
-		}
-		else if (p->x > 1000 || p->y > 1200) {
-			if (p->x > 1000 && p->y > 1200) {
-				Vv.setCenter(1000, 1200);
-			}
-			else if (p->x > 1000) {
-				Vv.setCenter(1000, p->y);
-			}
-			else if (p->y > 1200) {
-				Vv.setCenter(p->x, 1200);
-			}
-		}
-		else {
-			Vv.setCenter(p->x, p->y);
-		}
-
-		Vv.setSize(W, H);
-		//Vv.zoom(zoom);
-		//aaaVv.setRotation(angle1);
-		angle1 += 6*time;
-		if (angle1 > 360) angle1 = 0.1;
-		zoom += 0.1*time;
-		if (zoom > 5) zoom=0.1;
-		app.setView(Vv);
+		//Vv.setSize(W, H);
+		////Vv.zoom(zoom);
+		////aaaVv.setRotation(angle1);
+		//angle1 += 6*time;
+		//if (angle1 > 360) angle1 = 0.1;
+		//zoom += 0.1*time;
+		//if (zoom > 5) zoom=0.1;
+		//app.setView(Vv);
 
 		app.display();
 	}

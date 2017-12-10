@@ -32,9 +32,11 @@ void generateMap(int mapType); //Map generator
 float getPlayerX();
 float getPlayerY();
 bool isCollide(Entity *a, Entity *b);
+int main();
 void offsetEntities(int howMuchX, int howMuchY);
 bool isOutsideMap(int howMuchX, int howMuchY);
 
+int mapZoomVal = 2; //On the minimap this number defines the zoom level of the map , 1x ,2x zoom etc
 
 
 //Include all other parts of the game
@@ -130,6 +132,7 @@ int main()
 
 
 	RectangleShape rectangle(Vector2f(4, 4));
+	sf::CircleShape octagon(4, 8);
 	RectangleShape rectangle1(Vector2f(200, 200));
 	int mMapX = 1000;
 	int mMapY = 500;
@@ -248,7 +251,7 @@ int main()
 	}
 
 	player *p = new player();
-	p->settings(sPlayer, W / 2 , H / 2, 0, 20);
+	p->settings(sPlayer, (maxW / 2) / mapZoomVal , (maxH / 2) / mapZoomVal, 0, 20);
 	entities.push_back(p);
 
 	////////////////////////////
@@ -336,6 +339,10 @@ int main()
 		if (Keyboard::isKeyPressed(Keyboard::Num7)) gameMode = 7;
 		if (Keyboard::isKeyPressed(Keyboard::Num8)) gameMode = 8;
 		if (Keyboard::isKeyPressed(Keyboard::Num9)) gameMode = 9;
+		if (Keyboard::isKeyPressed(Keyboard::Dash)) gameMode = 9;
+				if (Keyboard::isKeyPressed(Keyboard::Dash)) mapZoomVal = 1;
+				if (Keyboard::isKeyPressed(Keyboard::Equal)) mapZoomVal =  2;
+
 
 
 
@@ -378,7 +385,7 @@ int main()
 						e->name = "explosion";
 						entities.push_back(e);
 
-						p->settings(sPlayer, W / 2, H / 2, 0, 20);
+						p->settings(sPlayer, (maxW / 2) / mapZoomVal, (maxH / 2) / mapZoomVal, 0, 20);
 						p->dx = 0; p->dy = 0;
 					}
 
@@ -578,6 +585,8 @@ int main()
 		rectangle1.setPosition(mMapX, mMapY);
 		app.draw(rectangle1);
 
+
+		//Draw the map
 		for (auto i : entities) {
 
 			/*if (playerXpos/32== i&&playerYpos/32 == j) {
@@ -603,9 +612,24 @@ int main()
 				rectangle.setFillColor(Color::Red);
 
 			}
-			else if (i->name == "wall") 	rectangle.setFillColor(Color::Color(0, 0, 0, 128));
-			rectangle.setPosition((i->x / 32) * 4 + mMapX, (i->y / 32) * 4 + mMapY);
-			app.draw(rectangle);
+			else if (i->name == "wall") 	rectangle.setFillColor(Color::White);
+			rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 + mMapX , (i->y / 32 * mapZoomVal) * 4 + mMapY);
+			if (i->x >= 0 && i->y >= 0 &&
+				i->x < maxW / mapZoomVal && i->y < maxH / mapZoomVal)
+			{
+				if (i->name == "zombie") 
+				{					
+					rectangle.setSize((Vector2f(5 * mapZoomVal, 5 * mapZoomVal)));
+					app.draw(rectangle);
+
+				}
+				else
+				{
+					rectangle.setSize((Vector2f(3 * mapZoomVal, 3 * mapZoomVal)));
+					app.draw(rectangle);
+				}
+
+			}
 		}
 
 		//}

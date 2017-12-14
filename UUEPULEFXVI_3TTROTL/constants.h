@@ -11,7 +11,7 @@ namespace Constants
 	extern double mouseXpos, mouseYpos, mouseAngle;//mouse location
 	extern const int mapH = 50;
 	extern const int mapW = 50;
-	extern int gameMode = 3;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
+	extern int gameMode = 0;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
 	extern const int maxW = 1600; //max Screen resolution - Width
 	extern const int maxH = 1600; //max Screen resolution - Height
 

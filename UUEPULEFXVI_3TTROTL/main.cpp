@@ -85,7 +85,7 @@ int main()
 
 	double mouseXpos, mouseYpos, mouseAngle;
 	sf::Vector2f curPos;
-
+	int zlcoef = 1;
 	srand(time(0));
 	// Load the font from a file
 	sf::Font font;

@@ -348,13 +348,32 @@ int main()
 			if (event.type == Event::MouseButtonPressed)
 				if (event.key.code == Mouse::Left)
 				{
-					bullet *b = new bullet();
-					sound.play();
-					b->settings(sBullet, p->x, p->y, p->angle, 10);
-					entities.push_back(b);
+
+					//bullet *b = new bullet();
+					//	sound.play();
+					//	b->settings(sBullet, p->x, p->y, p->angle, 10);
+					//	entities.push_back(b);
+
+					if (w->canshoot(time) /*&& w->currammo>0*/) {
+						for (int i = 0; i < rand() % w->spt; i++) {
+							bullet *b = new bullet();
+							b->settings(sBullet, p->x, p->y, p->angle - 45 + rand() % 90, 10);
+							b->xpos = p->x;
+							b->ypos = p->y;
+							entities.push_back(b);
+						}
+						//DE.play();
+
+						w->currammo--;
+						w->counter_spm = 0;
+					}
+
+
 				}
 		}
-
+		if (gTime>60000) {
+			zlcoef = updZombieLife(gTime);
+		}
 		//Angle Update
 		// This is for making Player point towards Mouse
 		//	double dX =  Mouse::getPosition().x; // x and y are global Varibales declared outside

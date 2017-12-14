@@ -49,7 +49,7 @@ int mapZoomVal = 2; //On the minimap this number defines the zoom level of the m
 #include "Walls.h"
 #include "Zombie.h"
 #include "PassableWall.h"
-
+#include "Weapon.h"
 
 //global variable
 float playerX;
@@ -195,6 +195,12 @@ int main()
 	//Entity *bg = new Entity();
 	//bg->settings(bBushes, 0, 0, 0, 0);//bg 
 	//entities.push_back(bg);
+
+	//Weapon entity
+	float gTime = 0;//time of the game
+	weapon *w = new weapon();
+	w->weaponSetup("weap_deserteagle_slmn_2.wav", 500, 5, 1, 20, 50, 500);
+	entities.push_back(w);
 
 	for (int i = 0; i < maxW; i++)
 	{

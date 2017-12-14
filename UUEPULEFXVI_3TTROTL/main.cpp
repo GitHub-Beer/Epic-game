@@ -37,7 +37,7 @@ void offsetEntities(int howMuchX, int howMuchY);
 bool isOutsideMap(int howMuchX, int howMuchY);
 
 int mapZoomVal = 2; //On the minimap this number defines the zoom level of the map , 1x ,2x zoom etc
-
+int updZombieLife(float time);
 
 //Include all other parts of the game
 #include "Animation.h""

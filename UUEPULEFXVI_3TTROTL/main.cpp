@@ -898,3 +898,16 @@ bool isTooClose(float xPos, float yPos)
 float getPlayerX() { return playerX; }
 float getPlayerY() { return playerY; }
 
+bool calculateDistance(Entity *b, weapon *c) {
+	return abs(sqrt((b->x - b->xpos)*(b->x - b->xpos) +
+		(b->y - b->ypos)*(b->y - b->ypos)))>c->dist;
+}
+
+void NewMapGenerator(int Breakable, int Unbreakable, Entity e) {
+
+
+}
+int updZombieLife(float time) {
+	return  int(time / 60000);
+}
+

@@ -10,8 +10,10 @@ public:
 	float x, y, dx, dy, R, angle;
 	bool life;
 	std::string name;
+	std::string type;
 	Animation anim;
 	float xpos, ypos;
+	float counter = 0;
 
 	Entity()
 	{
@@ -28,7 +30,9 @@ public:
 		R = radius;
 	}
 
-	virtual void update(float time) {};
+	virtual void update(float time) {
+		
+	};
 
 	void draw(RenderWindow &app)
 	{

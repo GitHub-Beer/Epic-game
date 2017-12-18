@@ -198,8 +198,10 @@ int main()
 	music.setLoop(true);
 	music.play();
 
+	Sound tri, fore;
+	tri.setBuffer(kill);
 
-
+	
 	weapon *pistol=new weapon();
 	weapon *rifle=new weapon();
 	weapon *shotgun=new weapon();
@@ -230,7 +232,7 @@ int main()
 	float gTime = 0;//time of the game
 	weapon *w = new weapon();
 	w->weaponSetup(psound, 60, 2, 3, 20, 50, 500,"test");
-	w->weaponcopy(pistol);
+	w->weaponcopy(shotgun,msound);
 	entities.push_back(w);
 
 	for (int i = 0; i < maxW; i++)
@@ -488,7 +490,47 @@ int main()
 						e->name = "explosion";
 						zkill.play();
 						entities.push_back(e);
+						//create pickable items
+						//if (rand() % 50 == 0) {
+							pickup *pik = new pickup();
+							pik->settings(bStone, a->x, a->y, a->angle, 25);
+							int x = rand( )% 3;
+							if (x == 0) {
+							//buff
+							}
+							else if (x == 1) {
+							//debuff
+							
+							}
+							else if (x == 2) {
+							//weapon
+								int y = rand() % 5;
+								if (y == 0) {
+								//pik->anim///
+									pik->type="pistol";
+								}
+								if (y == 1) {
+									//pik->anim///
+									pik->type = "shotgun";
+								}
+								if (y == 2) {
+									//pik->anim///
+									pik->type = "rifle";
+								}
+								if (y == 3) {
+									//pik->anim///
+									pik->type = "machinegun";
+								}
+								if (y == 4) {
+									//pik->anim///
+									pik->type = "rpg";
+								}
+							
+							}
 
+						
+								entities.push_back(pik);
+						//}
 						/*for (int i = 0; i<2; i++)
 						{
 						if (a->R == 15) continue;
@@ -513,7 +555,33 @@ int main()
 						p->dx = 0; p->dy = 0;
 						livesRemaining--;
 					}
-
+				if (a->name == "player"&& b->name == "pickup") {
+				//weapons 
+					if (isCollide(a, b))
+					{
+						if (b->type == "pistol") {
+							w->weaponcopy(pistol, psound);
+						}
+						if (b->type == "rifle") {
+							w->weaponcopy(rifle, rsound);
+						}
+						if (b->type == "shotgun") {
+							w->weaponcopy(shotgun, ssound);
+						}
+						if (b->type == "machinegun") {
+							w->weaponcopy(machinegun, msound);
+						}
+						if (b->type == "rpg") {
+							w->weaponcopy(rpg, rpsound);
+						}
+						b->life = false;
+						//buff
+						//debuff
+					}
+				
+				
+				
+				}
 				if (a->name == "zombie" && b->name == "zombie")
 					if (isCollide(a, b))
 					{
@@ -582,8 +650,10 @@ int main()
 				if (e->anim.isEnd()) e->life = 0;
 			if (e->name == "bullet") {
 				if (calculateDistance(e,w))
-					e->life = 0;
+					e->life = false;
 			}
+			
+			
 		}
 		if (rand() % 50 == 0)
 		{
@@ -819,7 +889,7 @@ int main()
 				"                                                                                                            Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
 			text.setPosition(viewX-W/2,viewY-H/2);
 			app.draw(text);
-			text.setString("Ammo left:" + std::to_string(w->currammo));
+			text.setString("Ammo left:" + std::to_string(w->currammo)+"         Current weapon:"+w->type );
 			text.setPosition(viewX - W / 2+30, viewY + H / 2-30);
 			app.draw(text);
 			if (w->currammo == 0) {
@@ -872,7 +942,7 @@ int main()
 
 				}
 				else if (i->name == "wall") 	rectangle.setFillColor(Color::White);
-
+				
 				rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 + mMapX, (i->y / 32 * mapZoomVal) * 4 + mMapY);
 				if (i->x >= 0 && i->y >= 0 &&
 					i->x < maxW / mapZoomVal && i->y < maxH / mapZoomVal)

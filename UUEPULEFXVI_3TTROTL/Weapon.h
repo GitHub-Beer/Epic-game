@@ -21,13 +21,13 @@ public:
 	float counter_spm;
 	float dist;//radius of bullet life
 	Sound snd;
-	std::string type;
+	
 	weapon()
 	{
 		name = "weapon";
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
-	void weaponcopy(weapon *w) {
+	void weaponcopy(weapon *w,SoundBuffer &Buf) {
 		if (type == w->type) {
 			spm *= 1.2;
 			ammo *= 1.2;
@@ -38,7 +38,7 @@ public:
 		}
 		else
 		{
-			snd.setBuffer(w->buffer);
+			snd.setBuffer(Buf);
 			spm = w->spm;
 			ammo = w->ammo;
 			rtime = w->rtime;

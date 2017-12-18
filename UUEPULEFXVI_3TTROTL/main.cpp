@@ -207,11 +207,11 @@ int main()
 	weapon *shotgun=new weapon();
 	weapon *rpg=new weapon();
 	weapon *machinegun=new weapon();
-	pistol->weaponSetup(psound, 60, 10, 5, 20, 1, 200,"pistol");
-	rifle->weaponSetup(rsound, 120, 30, 3, 50, 1, 350,"rifle");
-	shotgun->weaponSetup(ssound, 30, 8, 5, 30, 35, 180,"shotgun");
-	machinegun->weaponSetup(msound, 300, 240, 10, 20, 1, 300,"machine");
-	rpg->weaponSetup(rpsound, 40, 5, 10, 400, 1, 400,"rpg");
+	pistol->weaponSetup(psound, 60, 10, 5, 20, 1, 320,"pistol");
+	rifle->weaponSetup(rsound, 120, 30, 3, 50, 1, 720,"rifle");
+	shotgun->weaponSetup(ssound, 30, 8, 5, 30, 35, 320,"shotgun");
+	machinegun->weaponSetup(msound, 300, 240, 10, 20, 1, 500,"machine");
+	rpg->weaponSetup(rpsound, 40, 5, 10, 400, 1, 900,"rpg");
 
 	int randW, randH;
 
@@ -394,7 +394,8 @@ int main()
 					
 						bulletsShot++;
 						if (w->spt > 1) {
-							for (int i = 0; i < rand() % w->spt; i++) {
+							for (int i = 0; i < ((rand() % w->spt-w->spt/10)+w->spt/10); i++) {
+								//and() % (max_number + 1 - minimum_number) + minimum_number
 								bullet *b = new bullet();
 								b->settings(sBullet, p->x, p->y, p->angle - 45 + rand() % 90, 10);
 								b->xpos = p->x;

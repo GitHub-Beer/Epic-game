@@ -16,8 +16,8 @@ public:
 	{
 		dx = 0.1;
 		dy = 0.1;
-		acc = 5;
-		maxSpeed = 10;
+		acc = 1;
+		maxSpeed = 5;
 		name = "zombie"; \
 			//angle = atan2(getXlocation() - x, y - getYlocation()) * 180 / 3.14 + 180;
 	}
@@ -35,22 +35,22 @@ public:
 		{
 			if (x<getPlayerX())
 			{
-				dx += maxSpeed;
+				dx += acc*time;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 			else
 			{
-				dx -= maxSpeed;
+				dx -= acc*time;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 			if (y<getPlayerY())
 			{
-				dy += 5;
+				dy += acc*time;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 			else
 			{
-				dy -= 5;
+				dy -= acc*time;
 				angle = atan2(getPlayerX() - x, y - getPlayerY()) * 180 / 3.14 + 180;
 			}
 		};//Enemies follow you

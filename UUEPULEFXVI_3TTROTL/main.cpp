@@ -156,8 +156,8 @@ int main()
 	RectangleShape rectangle(Vector2f(4, 4));
 	//sf::CircleShape octagon(4, 8);
 	RectangleShape rectangle1(Vector2f(200, 200));
-	int mMapX = 1000;
-	int mMapY = 500;
+	int mMapX = W/2-10-4*mapH;
+	int mMapY =H/2-10-4*mapW;
 
 	//Sprite background(t14);
 
@@ -211,7 +211,7 @@ int main()
 	//Weapon entity
 	float gTime = 0;//time of the game
 	weapon *w = new weapon();
-	w->weaponSetup("weap_deserteagle_slmn_2.wav", 60, 2, 3, 20, 50, 500);
+	w->weaponSetup(buffer, 60, 2, 3, 20, 50, 500);
 	entities.push_back(w);
 
 	for (int i = 0; i < maxW; i++)
@@ -379,7 +379,7 @@ int main()
 							b->ypos = p->y;
 							entities.push_back(b);
 						}
-						//DE.play();
+						w->shoot_sound();
 
 						w->currammo--;
 						w->counter_spm = 0;
@@ -424,6 +424,7 @@ int main()
 		else p->thrustL = false;
 		if (Keyboard::isKeyPressed(Keyboard::D)) p->thrustR = true;
 		else p->thrustR = false;
+
 		if (Keyboard::isKeyPressed(Keyboard::Num0)) gameMode = 0;
 		if (Keyboard::isKeyPressed(Keyboard::Num1)) gameMode = 1;
 		if (Keyboard::isKeyPressed(Keyboard::Num2)) gameMode = 2;
@@ -735,7 +736,7 @@ int main()
 			//DRAW MAP//
 			//Minimap background
 			rectangle1.setFillColor(Color::Color(0, 0, 0, 128));
-			rectangle1.setPosition(viewX, viewY);
+			rectangle1.setPosition(viewX+mMapX, viewY+mMapY);
 			app.draw(rectangle1);
 			//Minimap entities
 			for (auto i : entities) {
@@ -765,7 +766,7 @@ int main()
 				}
 				else if (i->name == "wall") 	rectangle.setFillColor(Color::White);
 
-				rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 +viewX, (i->y / 32 * mapZoomVal) * 4 +viewY);
+				rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 +viewX+mMapX, (i->y / 32 * mapZoomVal) * 4 +viewY+mMapY);
 				if (i->x >= 0 && i->y >= 0 &&
 					i->x < maxW / mapZoomVal && i->y < maxH / mapZoomVal)
 				{
@@ -788,6 +789,7 @@ int main()
 			//text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
 			text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
 				"                                                                                                            Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			text.setPosition(viewX-W/2,viewY-H/2);
 			app.draw(text);
 			app.draw(debug);
 			app.display();

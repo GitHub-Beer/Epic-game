@@ -20,7 +20,7 @@ public:
 	float counter_reload=0;
 	float counter_spm;
 	float dist;//radius of bullet life
-	Sound snd();
+	Sound snd;
 
 	weapon()
 	{
@@ -28,14 +28,14 @@ public:
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
-	void weaponSetup(std::string _LOAD, int _spm, int _ammo, int _rtime, float _damage, int _spt, float distance ) {
+	void weaponSetup(SoundBuffer &Buf, int _spm, int _ammo, int _rtime, float _damage, int _spt, float distance ) {
 		spm = 600/_spm;
 		ammo = _ammo;
 		currammo = _ammo;
 		rtime = _rtime*10;//seconds to miliseconds
 		damage = _damage;
 		spt = _spt;
-		buffer.loadFromFile(_LOAD);
+		snd.setBuffer(Buf);
 		dist = distance;
 		counter_spm = spm + 1;
 		
@@ -76,9 +76,9 @@ public:
 		else return false;
 
 	}
-	void play() {
-		Sound sound(buffer);
-		sound.play();
+	void shoot_sound() {
+	
+		snd.play();
 	
 	
 	}

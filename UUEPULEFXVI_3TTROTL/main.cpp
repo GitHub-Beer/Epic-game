@@ -96,7 +96,7 @@ int main()
 		// error...
 	}
 	sf::Text text;
-
+	View VieW;
 	// select the font
 	text.setFont(font);
 	text.setCharacterSize(28);

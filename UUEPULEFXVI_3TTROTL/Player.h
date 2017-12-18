@@ -271,14 +271,14 @@ public:
 			dy*= maxSpeed/speed;
 		}
 
-		//x += dx;
-		//y += dy;
+		x += dx;
+		y += dy;
 
 
 		//if (x>maxW) x = maxW; if (x<0) x = 0;
 		//if (y>maxH) y = maxH; if (y<0) y = 0;
 		//if (isOutsideMap(dx*time, dy*time)) {
-			offsetEntities(dx*time, dy*time);
+			//offsetEntities(dx*time, dy*time);
 		//}
 	}
 

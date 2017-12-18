@@ -820,7 +820,34 @@ int main()
 			//text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
 			//text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
 			//	"                                                                                                    Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
-			
+			if (p->y < H / 2 || p->x < W / 2) {
+				if (p->y < H / 2 && p->x < W / 2) {
+					VieW.setCenter(W / 2, H / 2);
+				}
+				else if (p->y < H / 2) {
+					VieW.setCenter(p->x, H / 2);
+				}
+				else if (p->x <W / 2) {
+					VieW.setCenter(W / 2, p->y);
+				}
+
+			}
+			else if (p->x >(mapH * 32 - W / 2) || p->y >(mapW * 32 - H / 2) ){
+				if (p->x >  (mapW * 32 - H / 2) && (mapW * 32 - H / 2)) {
+					VieW.setCenter((mapW * 32 - H / 2), (mapW * 32 - H / 2));
+				}
+				else if (p->x > 1000) {
+					VieW.setCenter(1000, p->y);
+				}
+				else if (p->y > 1200) {
+					VieW.setCenter(p->x, 1200);
+				}
+			}
+			else {
+				VieW.setCenter(p->x, p->y);
+			}
+
+			VieW.setSize(W, H);
 			app.draw(text);
 			app.draw(gameover);
 

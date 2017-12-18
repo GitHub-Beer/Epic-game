@@ -15,8 +15,8 @@ public:
 	player()
 	{
 		name = "player";
-		acc = 15;
-		maxSpeed = 40;
+		acc = 2;
+		maxSpeed = 10;
 		stopspeed = 0.8;
 		sf = 0.00000001;
 		//angle = 0;
@@ -275,8 +275,8 @@ public:
 		y += dy;
 
 
-		//if (x>maxW) x = maxW; if (x<0) x = 0;
-		//if (y>maxH) y = maxH; if (y<0) y = 0;
+		if(x>maxW) x = maxW; if (x<0) x = 0;
+		if (y>maxH) y = maxH; if (y<0) y = 0;
 		//if (isOutsideMap(dx*time, dy*time)) {
 			//offsetEntities(dx*time, dy*time);
 		//}

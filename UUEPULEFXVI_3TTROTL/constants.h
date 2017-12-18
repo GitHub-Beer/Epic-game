@@ -12,8 +12,8 @@ namespace Constants
 	extern const int mapH = 50;
 	extern const int mapW = 50;
 	extern int gameMode = 0;//{ 0,1,2,3,4,5,6,7,8,9 }; //This game will feature 10 game modes, 0= default
-	extern const int maxW = 1600; //max Screen resolution - Width
-	extern const int maxH = 1600; //max Screen resolution - Height
+	extern const int maxW = mapW*32; //max Screen resolution - Width
+	extern const int maxH = mapH*32; //max Screen resolution - Height
 
 	extern const int W = 1280; //Screen resolution - Width
 	extern const int H = 720; ////Screen Height

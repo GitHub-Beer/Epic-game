@@ -29,10 +29,10 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
 	void weaponSetup(std::string _LOAD, int _spm, int _ammo, int _rtime, float _damage, int _spt, float distance ) {
-		spm = _spm;
+		spm = 600/_spm;
 		ammo = _ammo;
 		currammo = _ammo;
-		rtime = _rtime*5;//seconds to miliseconds
+		rtime = _rtime*10;//seconds to miliseconds
 		damage = _damage;
 		spt = _spt;
 		buffer.loadFromFile(_LOAD);
@@ -82,25 +82,25 @@ public:
 	
 	
 	}
-     	bool reload(float time) {
+     	void reload(float time) {
 
 		if (counter_reload > rtime) {
 			currammo = ammo;
 			
-			counter_reload == 0;
-			return false;
+			counter_reload = 0;
+			
 		}
 		
 		else {
+			counter_reload += time;
 			
-			return true;
 		}
 	}
 	void  update(float time)
 	{
 		counter_spm += time;
 		if (currammo == 0) {
-			counter_reload += time;
+			reload(time);
 		}
 		//dx = cos(angle*DEGTORAD) * 6;
 		//dy = sin(angle*DEGTORAD) * 6;

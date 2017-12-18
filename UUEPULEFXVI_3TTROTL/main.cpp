@@ -32,6 +32,7 @@ void generateMap(int mapType); //Map generator
 float getPlayerX();
 float getPlayerY();
 bool isCollide(Entity *a, Entity *b);
+
 int main();
 void offsetEntities(int howMuchX, int howMuchY);
 bool isOutsideMap(int howMuchX, int howMuchY);
@@ -50,7 +51,7 @@ int updZombieLife(float time);
 #include "Zombie.h"
 #include "PassableWall.h"
 #include "Weapon.h"
-
+bool calculateDistance(Entity *b, weapon *c);
 //global variable
 float playerX;
 float playerY;
@@ -210,7 +211,7 @@ int main()
 	//Weapon entity
 	float gTime = 0;//time of the game
 	weapon *w = new weapon();
-	w->weaponSetup("weap_deserteagle_slmn_2.wav", 500, 5, 1, 20, 50, 500);
+	w->weaponSetup("weap_deserteagle_slmn_2.wav", 60, 2, 3, 20, 50, 500);
 	entities.push_back(w);
 
 	for (int i = 0; i < maxW; i++)
@@ -351,7 +352,7 @@ int main()
 		time = clock.getElapsedTime().asMilliseconds();
 		clock.restart();
 		time = time / 100;
-		if (time > 50) time = 50;
+		//if (time > 20) time = 20;
 
 		Event event;
 		while (app.pollEvent(event))
@@ -368,8 +369,8 @@ int main()
 					//	b->settings(sBullet, p->x, p->y, p->angle, 10);
 					//	entities.push_back(b);
 
-					//if (w->canshoot(time) /*&& w->currammo>0*/) {
-					if(true){
+					if (w->canshoot(time) && w->currammo>0) {
+					
 						bulletsShot++;
 						for (int i = 0; i < rand() % w->spt; i++) {
 							bullet *b = new bullet();
@@ -547,10 +548,14 @@ int main()
 		else   p->anim = sPlayer;
 
 
-		for (auto e : entities)
+		for (auto e : entities) {
 			if (e->name == "explosion")
 				if (e->anim.isEnd()) e->life = 0;
-
+			if (e->name == "bullet") {
+				if (calculateDistance(e,w))
+					e->life = 0;
+			}
+		}
 		if (rand() % 50 == 0)
 		{
 			if (rand() % 2 == 0)//Randomize location 1 Branch : Top/Bot or Left/Right , 2nd Branch , Top, Bot, Left, Right
@@ -684,12 +689,55 @@ int main()
 
 
 
+			
+
+			//SET VIEW
+			float viewX = 0;
+			float viewY = 0;
+			if (p->x < W / 2)viewX = W / 2; if (p->y < H / 2)viewY = H / 2;
+			if (p->x > (maxW - W / 2))viewX = maxW - W / 2; if (p->y > (maxH - H / 2))viewY = maxH - H / 2;
+			if (p->x > W / 2 & p->x < (maxW - W / 2))viewX = p->x; if (p->y > H / 2 & p->y < (maxH - H / 2))viewY = p->y;
+			/*if (p->y < H / 2 || p->x < W / 2) {
+				if (p->y < H / 2 && p->x < W / 2) {
+					VieW.setCenter(W / 2, H / 2);
+				}
+				else if (p->y < H / 2) {
+					VieW.setCenter(p->x, H / 2);
+				}
+				else if (p->x <W / 2) {
+					VieW.setCenter(W / 2, p->y);
+				}
+
+			}
+			else if (p->x >(maxW-W/2) || p->y >(maxH-H/2)) {
+				if (p->x >  (maxW - W / 2) && p->y > (maxH - H / 2)) {
+					VieW.setCenter((maxW - W / 2), (maxH - H / 2));
+				}
+				else if (p->x >(maxW - W / 2)) {
+					VieW.setCenter(maxW - W / 2, p->y);
+				}
+				
+				else if (p->y >(maxH - H / 2)) {
+					VieW.setCenter(p->x, (maxH - H / 2));
+				}
+			}*/
+		/*	else if (p->x<W / 2 && p->y>(maxH - H / 2)) {
+				VieW.setCenter(W / 2, maxH - H / 2);
+			}*/
+			/*else {
+				VieW.setCenter(p->x, p->y);
+			}*/
+			VieW.setCenter(viewX, viewY);
+			VieW.setSize(W, H);
+			app.setView(VieW);
+
+			////////////////////////////////////////////////////////////////////////////
+			//DRAW MAP//
+			//Minimap background
 			rectangle1.setFillColor(Color::Color(0, 0, 0, 128));
-			rectangle1.setPosition(mMapX, mMapY);
+			rectangle1.setPosition(viewX, viewY);
 			app.draw(rectangle1);
-
-
-			//Draw the map
+			//Minimap entities
 			for (auto i : entities) {
 
 				/*if (playerXpos/32== i&&playerYpos/32 == j) {
@@ -717,7 +765,7 @@ int main()
 				}
 				else if (i->name == "wall") 	rectangle.setFillColor(Color::White);
 
-				rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 + mMapX, (i->y / 32 * mapZoomVal) * 4 + mMapY);
+				rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 +viewX, (i->y / 32 * mapZoomVal) * 4 +viewY);
 				if (i->x >= 0 && i->y >= 0 &&
 					i->x < maxW / mapZoomVal && i->y < maxH / mapZoomVal)
 				{
@@ -736,11 +784,6 @@ int main()
 
 				}
 			}
-
-			//}
-			//	
-
-
 			//}		
 			//text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
 			text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
@@ -820,38 +863,12 @@ int main()
 			//text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
 			//text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
 			//	"                                                                                                    Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
-			if (p->y < H / 2 || p->x < W / 2) {
-				if (p->y < H / 2 && p->x < W / 2) {
-					VieW.setCenter(W / 2, H / 2);
-				}
-				else if (p->y < H / 2) {
-					VieW.setCenter(p->x, H / 2);
-				}
-				else if (p->x <W / 2) {
-					VieW.setCenter(W / 2, p->y);
-				}
-
-			}
-			else if (p->x >(mapH * 32 - W / 2) || p->y >(mapW * 32 - H / 2) ){
-				if (p->x >  (mapW * 32 - H / 2) && (mapW * 32 - H / 2)) {
-					VieW.setCenter((mapW * 32 - H / 2), (mapW * 32 - H / 2));
-				}
-				else if (p->x > 1000) {
-					VieW.setCenter(1000, p->y);
-				}
-				else if (p->y > 1200) {
-					VieW.setCenter(p->x, 1200);
-				}
-			}
-			else {
-				VieW.setCenter(p->x, p->y);
-			}
-
-			VieW.setSize(W, H);
+			
 			app.draw(text);
 			app.draw(gameover);
 
 			app.draw(debug);
+
 			app.display();
 			if (Keyboard::isKeyPressed(Keyboard::Return))
 			{
@@ -1036,6 +1053,8 @@ bool isTooClose(float xPos, float yPos)
 
 float getPlayerX() { return playerX; }
 float getPlayerY() { return playerY; }
+
+
 
 bool calculateDistance(Entity *b, weapon *c) {
 	return abs(sqrt((b->x - b->xpos)*(b->x - b->xpos) +

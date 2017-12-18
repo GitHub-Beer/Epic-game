@@ -21,24 +21,47 @@ public:
 	float counter_spm;
 	float dist;//radius of bullet life
 	Sound snd;
-
+	std::string type;
 	weapon()
 	{
 		name = "weapon";
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
+	void weaponcopy(weapon *w) {
+		if (type == w->type) {
+			spm *= 1.2;
+			ammo *= 1.2;
+			rtime *= 0.9;
+			damage*=1.2;
+			dist *= 1.2;
 
-	void weaponSetup(SoundBuffer &Buf, int _spm, int _ammo, int _rtime, float _damage, int _spt, float distance ) {
+		}
+		else
+		{
+			snd.setBuffer(w->buffer);
+			spm = w->spm;
+			ammo = w->ammo;
+			rtime = w->rtime;
+			damage =  w->damage;
+			dist = w->dist;
+			spt = w->spt;
+			type = w->type;
+			currammo = ammo;
+		}
+	
+	}
+	void weaponSetup(SoundBuffer &Buf, int _spm, int _ammo, int _rtime, float _damage, int _spt, float distance ,std::string _type) {
 		spm = 600/_spm;
 		ammo = _ammo;
 		currammo = _ammo;
 		rtime = _rtime*10;//seconds to miliseconds
 		damage = _damage;
 		spt = _spt;
+		buffer = Buf;
 		snd.setBuffer(Buf);
 		dist = distance;
 		counter_spm = spm + 1;
-		
+		type = _type;
 		
 	
 	}
@@ -71,6 +94,9 @@ public:
 		
 		
 	}*/
+	float wreloadpercentage() {
+		return (counter_reload/rtime)*100;
+	}
 	bool needReload() {
 		if (currammo == 0) return true;
 		else return false;

@@ -96,14 +96,18 @@ int main()
 	{
 		// error...
 	}
-	sf::Text text;
+	sf::Text text,reload;
 	View VieW;
 	// select the font
 	text.setFont(font);
 	text.setCharacterSize(28);
 	text.setColor(sf::Color::Red);
 	text.setStyle(sf::Text::Bold);
-
+	
+	reload.setFont(font);
+	reload.setCharacterSize(16);
+	reload.setColor(Color::Color(255, 0, 0, 128));
+	reload.setStyle(sf::Text::Bold);
 	sf::Text debug, gameover;
 
 	// select the font for debug
@@ -179,19 +183,33 @@ int main()
 //	Animation bBackground(t14, 0, 0, 1600, 1600, 1, 0);
 
 
-	SoundBuffer buffer;
-	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
-	Sound sound(buffer);
-	SoundBuffer buf;
-	buf.loadFromFile("Jump.ogg");
-	Sound sou(buf);
+	SoundBuffer psound,ssound,msound,rsound,rpsound;
+	psound.loadFromFile("sound/weapon/pistol.wav");
+	ssound.loadFromFile("sound/weapon/shotgun.wav");
+	rsound.loadFromFile("sound/weapon/rifle.wav");
+	rpsound.loadFromFile("sound/weapon/RPG.wav");
+	msound.loadFromFile("sound/weapon/machinegun.wav");
+	
+	SoundBuffer kill;
+	kill.loadFromFile("sound/kill/Jump.ogg");
+	Sound zkill(kill);
 	Music music;
-	music.openFromFile("Mario_Theme.ogg");
+	music.openFromFile("sound/Mario_Theme.ogg");
+	music.setLoop(true);
 	music.play();
 
 
 
-
+	weapon *pistol=new weapon();
+	weapon *rifle=new weapon();
+	weapon *shotgun=new weapon();
+	weapon *rpg=new weapon();
+	weapon *machinegun=new weapon();
+	pistol->weaponSetup(psound, 60, 10, 5, 20, 1, 200,"pistol");
+	rifle->weaponSetup(rsound, 120, 30, 3, 50, 1, 350,"rifle");
+	shotgun->weaponSetup(ssound, 30, 8, 5, 30, 35, 180,"shotgun");
+	machinegun->weaponSetup(msound, 300, 240, 10, 20, 1, 300,"machine");
+	rpg->weaponSetup(rpsound, 40, 5, 10, 400, 1, 400,"rpg");
 
 	int randW, randH;
 
@@ -211,7 +229,8 @@ int main()
 	//Weapon entity
 	float gTime = 0;//time of the game
 	weapon *w = new weapon();
-	w->weaponSetup(buffer, 60, 2, 3, 20, 50, 500);
+	w->weaponSetup(psound, 60, 2, 3, 20, 50, 500,"test");
+	w->weaponcopy(pistol);
 	entities.push_back(w);
 
 	for (int i = 0; i < maxW; i++)
@@ -372,9 +391,18 @@ int main()
 					if (w->canshoot(time) && w->currammo>0) {
 					
 						bulletsShot++;
-						for (int i = 0; i < rand() % w->spt; i++) {
+						if (w->spt > 1) {
+							for (int i = 0; i < rand() % w->spt; i++) {
+								bullet *b = new bullet();
+								b->settings(sBullet, p->x, p->y, p->angle - 45 + rand() % 90, 10);
+								b->xpos = p->x;
+								b->ypos = p->y;
+								entities.push_back(b);
+							}
+						}
+						else {
 							bullet *b = new bullet();
-							b->settings(sBullet, p->x, p->y, p->angle - 45 + rand() % 90, 10);
+							b->settings(sBullet, p->x, p->y, p->angle, 10);
 							b->xpos = p->x;
 							b->ypos = p->y;
 							entities.push_back(b);
@@ -458,7 +486,7 @@ int main()
 						e->settings(sExplosion, a->x, a->y, a->angle, 1);
 
 						e->name = "explosion";
-						sou.play();
+						zkill.play();
 						entities.push_back(e);
 
 						/*for (int i = 0; i<2; i++)
@@ -791,6 +819,14 @@ int main()
 				"                                                                                                            Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
 			text.setPosition(viewX-W/2,viewY-H/2);
 			app.draw(text);
+			text.setString("Ammo left:" + std::to_string(w->currammo));
+			text.setPosition(viewX - W / 2+30, viewY + H / 2-30);
+			app.draw(text);
+			if (w->currammo == 0) {
+				reload.setString(std::to_string(int(w->wreloadpercentage())));
+				reload.setPosition(p->x+30, p->y - 40);
+				app.draw(reload);
+			}
 			app.draw(debug);
 			app.display();
 		}

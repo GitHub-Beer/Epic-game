@@ -17,7 +17,7 @@ public:
 	float damage;//damage from one shot
 	int spt;//shots per one turn uses for shotgun
 	int currammo;
-	float counter_reload=0;
+	float counter_reload;
 	float counter_spm;
 	float dist;//radius of bullet life
 	Sound snd();
@@ -29,16 +29,16 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
 	void weaponSetup(std::string _LOAD, int _spm, int _ammo, int _rtime, float _damage, int _spt, float distance ) {
-		spm = _spm;
+		spm =600/_spm;
 		ammo = _ammo;
 		currammo = _ammo;
-		rtime = _rtime*5;//seconds to miliseconds
+		rtime = 600/_rtime;//seconds to miliseconds
 		damage = _damage;
 		spt = _spt;
 		buffer.loadFromFile(_LOAD);
 		dist = distance;
 		counter_spm = spm + 1;
-		
+		float counter_reload=0;
 		
 	
 	}
@@ -82,25 +82,30 @@ public:
 	
 	
 	}
-     	bool reload(float time) {
+     	void reload(float time) {
 
 		if (counter_reload > rtime) {
 			currammo = ammo;
 			
-			counter_reload == 0;
-			return false;
+			counter_reload = 0;
+			//return false;
 		}
 		
 		else {
-			
-			return true;
+			counter_reload += time;
+			//return true;
 		}
 	}
 	void  update(float time)
 	{
 		counter_spm += time;
+		//if (currammo == 0) {
+			
+		//}
 		if (currammo == 0) {
+			reload(time);
 			counter_reload += time;
+
 		}
 		//dx = cos(angle*DEGTORAD) * 6;
 		//dy = sin(angle*DEGTORAD) * 6;

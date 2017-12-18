@@ -7,11 +7,13 @@ class bullet : public Entity
 {
 public:
 
+
 	bullet()
 	{
 		name = "bullet";
 		xpos = x;
 		ypos = y;
+
 	}
 
 	void  update(float time)

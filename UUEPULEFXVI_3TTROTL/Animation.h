@@ -6,17 +6,18 @@ using namespace sf;
 class Animation
 {
 public:
-	float Frame, speed;
+	float Frame, speed, size;
 	Sprite sprite;
-	std::vector<IntRect> frames;
 
+	std::vector<IntRect> frames;
+	
 	Animation() {}
 
 	Animation(Texture &t, int x, int y, int w, int h, int count, float Speed)
 	{
 		Frame = 0;
 		speed = Speed;
-
+		size = 1;
 		for (int i = 0; i<count; i++)
 			frames.push_back(IntRect(x + i*w, y, w, h));
 

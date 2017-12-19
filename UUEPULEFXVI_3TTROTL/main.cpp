@@ -105,7 +105,7 @@ int main()
 	text.setStyle(sf::Text::Bold);
 	
 	reload.setFont(font);
-	reload.setCharacterSize(16);
+	reload.setCharacterSize(20);
 	reload.setColor(Color::Color(255, 0, 0, 128));
 	reload.setStyle(sf::Text::Bold);
 	sf::Text debug, gameover;
@@ -198,9 +198,8 @@ int main()
 	music.setLoop(true);
 	music.play();
 
-	Sound tri, fore;
-	tri.setBuffer(kill);
-
+	
+	
 	
 	weapon *pistol=new weapon();
 	weapon *rifle=new weapon();
@@ -209,7 +208,7 @@ int main()
 	weapon *machinegun=new weapon();
 	pistol->weaponSetup(psound, 60, 10, 5, 20, 1, 320,"pistol");
 	rifle->weaponSetup(rsound, 120, 30, 3, 50, 1, 720,"rifle");
-	shotgun->weaponSetup(ssound, 30, 8, 5, 30, 35, 320,"shotgun");
+	shotgun->weaponSetup(ssound, 60, 8, 5, 30, 35, 320,"shotgun");
 	machinegun->weaponSetup(msound, 300, 240, 10, 20, 1, 500,"machine");
 	rpg->weaponSetup(rpsound, 40, 5, 10, 400, 1, 900,"rpg");
 
@@ -219,7 +218,7 @@ int main()
 	generateMap(0);
 	//generateMap(0);
 
-	//Sprite background(t11);
+	//Sprite background(t11);aaaaaa
 
 	//Make map entities
 	
@@ -381,8 +380,9 @@ int main()
 			if (event.type == Event::Closed)
 				app.close();
 
-			if (event.type == Event::MouseButtonPressed)
-				if (event.key.code == Mouse::Left)
+			if (event.type == Event::KeyPressed)
+				if (event.key.code == Keyboard::Space)
+				
 				{
 
 					//bullet *b = new bullet();
@@ -492,7 +492,7 @@ int main()
 						zkill.play();
 						entities.push_back(e);
 						//create pickable items
-						//if (rand() % 50 == 0) {
+						//if (rand() % 10 == 0) {
 							pickup *pik = new pickup();
 							pik->settings(bStone, a->x, a->y, a->angle, 25);
 							int x = rand( )% 3;
@@ -894,7 +894,7 @@ int main()
 			text.setPosition(viewX - W / 2+30, viewY + H / 2-30);
 			app.draw(text);
 			if (w->currammo == 0) {
-				reload.setString(std::to_string(int(w->wreloadpercentage())));
+				reload.setString("Reloading... " + std::to_string(int(w->wreloadpercentage())) + "%");
 				reload.setPosition(p->x+30, p->y - 40);
 				app.draw(reload);
 			}

@@ -12,8 +12,7 @@ public:
 	pickup()
 	{
 		name = "pickup";
-		xpos = x;
-		ypos = y;
+		
 	}
 	
 	void  update(float time)

@@ -161,6 +161,18 @@ int main()
 	Animation apistol(w3, 0, 0, 300, 200, 1, 0);
 	Animation arifle(w4, 0, 0, 300, 200, 1, 0);
 	Animation ashotgun(w5, 0, 0, 300, 200, 1, 0);
+	//pickable texture
+	Texture p1, p2, p3, p4, p5, p6;
+	p1.loadFromFile("images/weapons/pickable/rpg_pick.png");
+	p2.loadFromFile("images/weapons/pickable/machine_pick.png");
+	p3.loadFromFile("images/weapons/pickable/pistol_pick.png");
+	p4.loadFromFile("images/weapons/pickable/rifle_pick.png");
+	p5.loadFromFile("images/weapons/pickable/shotgun_pick.png");
+	Animation p_rpg(p1, 0, 0, 90, 20, 1, 0);
+	Animation p_machine(p2, 0, 0, 91, 29, 1, 0);
+	Animation p_pistol(p3, 0, 0, 55, 31, 1, 0);
+	Animation p_rifle(p4, 0, 0, 89, 18, 1, 0);
+	Animation p_shotgun(p5, 0, 0, 85, 29, 1, 0);
 
 	/*Animation Ww1(w1, 0, 0, 300, 100, 1, 0);
 	Animation Ww2(w2, 0, 0, 300, 100, 1, 0);
@@ -537,31 +549,31 @@ int main()
 								if (y == 0) {
 								//pik->anim///
 									pik->type="pistol";
-									pik->settings(apistol, a->x, a->y, a->angle, 25);
+									pik->settings(p_pistol, a->x, a->y, a->angle, 25);
 
 								}
 								if (y == 1) {
 									//pik->anim///
 									pik->type = "shotgun";
-									pik->settings(ashotgun, a->x, a->y, a->angle, 25);
+									pik->settings(p_shotgun, a->x, a->y, a->angle, 25);
 
 								}
 								if (y == 2) {
 									//pik->anim///
 									pik->type = "rifle";
-									pik->settings(arifle, a->x, a->y, a->angle, 25);
+									pik->settings(p_rifle, a->x, a->y, a->angle, 25);
 
 								}
 								if (y == 3) {
 									//pik->anim///
 									pik->type = "machinegun";
-									pik->settings(amachine, a->x, a->y, a->angle, 25);
+									pik->settings(p_machine, a->x, a->y, a->angle, 25);
 
 								}
 								if (y == 4) {
 									//pik->anim///
 									pik->type = "rpg";
-									pik->settings(arpg, a->x, a->y, a->angle, 25);
+									pik->settings(p_rpg, a->x, a->y, a->angle, 25);
 
 								}
 							

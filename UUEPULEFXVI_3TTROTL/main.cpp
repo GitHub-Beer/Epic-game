@@ -34,6 +34,7 @@ float getPlayerY();
 bool isCollide(Entity *a, Entity *b);
 
 int main();
+//int gameWon = false;
 void offsetEntities(int howMuchX, int howMuchY);
 bool isOutsideMap(int howMuchX, int howMuchY);
 
@@ -79,7 +80,8 @@ std::list < RectangleShape* >   bgRects; //background rectangls
 int main()
 
 {
-
+	int gameWonScore = 100;
+	bool mousePress = false;
 	std::random_device rd; // obtain a random number from hardware
 	std::mt19937 eng(rd()); // seed the generator
 
@@ -231,7 +233,8 @@ int main()
 	msound.loadFromFile("sound/weapon/machinegun.wav");
 	
 	SoundBuffer kill;
-	kill.loadFromFile("sound/kill/Jump.ogg");
+	//kill.loadFromFile("sound/kill/Jump.ogg");
+	kill.loadFromFile("sound/kill/hitmarker.wav");
 	Sound zkill(kill);
 	Music music;
 	music.openFromFile("sound/Mario_Theme.ogg");
@@ -405,10 +408,10 @@ int main()
 	while (app.isOpen())
 	{
 
-		if (livesRemaining >= 0)
+		if (livesRemaining >= 0 && zombiesKilled < gameWonScore)
 		{
 		//
-
+	
 		time = clock.getElapsedTime().asMilliseconds();
 		clock.restart();
 		time = time / 100;
@@ -419,45 +422,63 @@ int main()
 		{
 			if (event.type == Event::Closed)
 				app.close();
-
-			if (event.type == Event::KeyPressed)
-				if (event.key.code == Keyboard::Space)
-				
-				{
-
-					//bullet *b = new bullet();
-					//	sound.play();
-					//	b->settings(sBullet, p->x, p->y, p->angle, 10);
-					//	entities.push_back(b);
-
-					if (w->canshoot(time) && w->currammo>0) {
+			
+			//if (event.type == Event::KeyPressed)
+			//app.setKeyRepeatEnabled(true);
+			if (Keyboard::isKeyPressed(Keyboard::Space))
+			{
+			//	if (event.mouseButton.button == sf::Mouse::Left)
+					//mousePress = true;
 					
-						bulletsShot++;
-						if (w->spt > 1) {
-							for (int i = 0; i < ((rand() % w->spt-w->spt/10)+w->spt/10); i++) {
-								//and() % (max_number + 1 - minimum_number) + minimum_number
+						//if (event.key.code == Keyboard::Space)
+						//while (event.type == Event::MouseButtonReleased)
+					{
+
+						//bullet *b = new bullet();
+						//	sound.play();
+						//	b->settings(sBullet, p->x, p->y, p->angle, 10);
+						//	entities.push_back(b);
+
+						if (w->canshoot(time) && w->currammo > 0) {
+
+							bulletsShot++;
+							if (w->spt > 1) {
+								for (int i = 0; i < ((rand() % w->spt - w->spt / 10) + w->spt / 10); i++) {
+									//and() % (max_number + 1 - minimum_number) + minimum_number
+									bullet *b = new bullet();
+									b->settings(sBullet, p->x, p->y, p->angle - 45 + rand() % 90, 10);
+									b->xpos = p->x;
+									b->ypos = p->y;
+									entities.push_back(b);
+								}
+							}
+							else {
 								bullet *b = new bullet();
-								b->settings(sBullet, p->x, p->y, p->angle - 45 + rand() % 90, 10);
+								b->settings(sBullet, p->x, p->y, p->angle, 10);
 								b->xpos = p->x;
 								b->ypos = p->y;
 								entities.push_back(b);
 							}
-						}
-						else {
-							bullet *b = new bullet();
-							b->settings(sBullet, p->x, p->y, p->angle, 10);
-							b->xpos = p->x;
-							b->ypos = p->y;
-							entities.push_back(b);
-						}
-						w->shoot_sound();
+							w->shoot_sound();
 
-						w->currammo--;
-						w->counter_spm = 0;
+							w->currammo--;
+							w->counter_spm = 0;
+						}
+
+
 					}
 
-
-				}
+	
+			}
+			//mousePress = false;
+			//if (sf::Event::KeyReleased)
+			//{
+			////	if (event.mouseButton.button == sf::Mouse::Left)
+			//		//mousePress = false;
+			//		zombiesKilled == 0;
+			//}
+			//if (event.mouseButton.button == sf::Mouse::Left)
+			
 		}
 		if (gTime>60000) {
 			zlcoef = updZombieLife(gTime);
@@ -994,8 +1015,8 @@ int main()
 			app.draw(text);
 			//
 			text.setCharacterSize(40);
-			text.setPosition(viewX + W / 2 - 60 -75, viewY - H / 2 + 40 + 5);
-			text.setString(std::to_string(zombiesKilled));
+			text.setPosition(viewX + W / 2 - 60 -75 -30, viewY - H / 2 + 40 + 5);
+			text.setString(std::to_string(zombiesKilled) + "/" + std::to_string(gameWonScore));
 			app.draw(text);
 			text.setCharacterSize(28);
 
@@ -1054,56 +1075,56 @@ int main()
 
 			rectangle1.setFillColor(Color::Color(0, 0, 0, 128));
 			rectangle1.setPosition(mMapX, mMapY);
-			app.draw(rectangle1);
+			//app.draw(rectangle1);
 
 
 			//Draw the map
-			for (auto i : entities) {
+			//for (auto i : entities) {
 
-				/*if (playerXpos/32== i&&playerYpos/32 == j) {
-				rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
+			//	/*if (playerXpos/32== i&&playerYpos/32 == j) {
+			//	rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
 
-				if (i->name == "p_wall") {
+			//	if (i->name == "p_wall") {
 
-					rectangle.setFillColor(Color::Color(0, 255, 0, 128));
+			//		rectangle.setFillColor(Color::Color(0, 255, 0, 128));
 
-				}
-				else if (i->name == "zombie") {
+			//	}
+			//	else if (i->name == "zombie") {
 
-					rectangle.setFillColor(Color::Cyan);
+			//		rectangle.setFillColor(Color::Cyan);
 
-				}
-				else if (i->name == "bullet") {
+			//	}
+			//	else if (i->name == "bullet") {
 
-					rectangle.setFillColor(Color::Blue);
+			//		rectangle.setFillColor(Color::Blue);
 
-				}
-				else if (i->name == "player") {
+			//	}
+			//	else if (i->name == "player") {
 
-					rectangle.setFillColor(Color::Red);
+			//		rectangle.setFillColor(Color::Red);
 
-				}
-				else if (i->name == "wall") 	rectangle.setFillColor(Color::White);
-				
-				rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 + mMapX, (i->y / 32 * mapZoomVal) * 4 + mMapY);
-				if (i->x >= 0 && i->y >= 0 &&
-					i->x < maxW / mapZoomVal && i->y < maxH / mapZoomVal)
-				{
-					if (i->name == "zombie")
-					{
-						rectangle.setSize((Vector2f(5 * mapZoomVal, 5 * mapZoomVal)));
-						app.draw(rectangle);
+			//	}
+			//	else if (i->name == "wall") 	rectangle.setFillColor(Color::White);
+			//	
+			//	rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 + mMapX, (i->y / 32 * mapZoomVal) * 4 + mMapY);
+			//	if (i->x >= 0 && i->y >= 0 &&
+			//		i->x < maxW / mapZoomVal && i->y < maxH / mapZoomVal)
+			//	{
+			//		if (i->name == "zombie")
+			//		{
+			//			rectangle.setSize((Vector2f(5 * mapZoomVal, 5 * mapZoomVal)));
+			//			app.draw(rectangle);
 
-					}
-					else
-					{
-						rectangle.setSize((Vector2f(3 * mapZoomVal, 3 * mapZoomVal)));
-						app.draw(rectangle);
+			//		}
+			//		else
+			//		{
+			//			rectangle.setSize((Vector2f(3 * mapZoomVal, 3 * mapZoomVal)));
+			//			app.draw(rectangle);
 
-					}
+			//		}
 
-				}
-			}
+			//	}
+			//}
 
 			//}
 			//	
@@ -1117,6 +1138,16 @@ int main()
 
 
 			app.draw(text);
+			gameover.setColor(Color::Green);
+			gameover.setString("     GAME WON!!!   press enter to restart");
+			if (livesRemaining < 0)
+			{
+				gameover.setColor(sf::Color::Red);
+				//gameover.setStyle(sf::Text::Bold);
+				gameover.setPosition(sf::Vector2f(100, H / 2));
+				gameover.setString("GAME OVER!      press enter to restart");
+
+			}
 			app.draw(gameover);
 
 			app.draw(debug);
@@ -1127,6 +1158,7 @@ int main()
 				livesRemaining = 3;
 				zombiesKilled = 0;
 				bulletsShot = 0;
+				//gameWon = false;
 		
 			}
 			for (auto i : entities)

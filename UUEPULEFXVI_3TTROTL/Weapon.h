@@ -20,25 +20,48 @@ public:
 	float counter_reload=0;
 	float counter_spm;
 	float dist;//radius of bullet life
-	Sound snd();
-
+	Sound snd;
+	
 	weapon()
 	{
 		name = "weapon";
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
+	void weaponcopy(weapon *w,SoundBuffer &Buf) {
+		if (type == w->type) {
+			spm *= 1.2;
+			ammo *= 1.2;
+			rtime *= 0.9;
+			damage*=1.2;
+			dist *= 1.2;
 
-	void weaponSetup(std::string _LOAD, int _spm, int _ammo, int _rtime, float _damage, int _spt, float distance ) {
-		spm = _spm;
+		}
+		else
+		{
+			snd.setBuffer(Buf);
+			spm = w->spm;
+			ammo = w->ammo;
+			rtime = w->rtime;
+			damage =  w->damage;
+			dist = w->dist;
+			spt = w->spt;
+			type = w->type;
+			currammo = ammo;
+		}
+	
+	}
+	void weaponSetup(SoundBuffer &Buf, int _spm, int _ammo, int _rtime, float _damage, int _spt, float distance ,std::string _type) {
+		spm = 600/_spm;
 		ammo = _ammo;
 		currammo = _ammo;
-		rtime = _rtime*5;//seconds to miliseconds
+		rtime = _rtime*10;//seconds to miliseconds
 		damage = _damage;
 		spt = _spt;
-		buffer.loadFromFile(_LOAD);
+		buffer = Buf;
+		snd.setBuffer(Buf);
 		dist = distance;
 		counter_spm = spm + 1;
-		
+		type = _type;
 		
 	
 	}
@@ -71,36 +94,39 @@ public:
 		
 		
 	}*/
+	float wreloadpercentage() {
+		return (counter_reload/rtime)*100;
+	}
 	bool needReload() {
 		if (currammo == 0) return true;
 		else return false;
 
 	}
-	void play() {
-		Sound sound(buffer);
-		sound.play();
+	void shoot_sound() {
+	
+		snd.play();
 	
 	
 	}
-     	bool reload(float time) {
+     	void reload(float time) {
 
 		if (counter_reload > rtime) {
 			currammo = ammo;
 			
-			counter_reload == 0;
-			return false;
+			counter_reload = 0;
+			
 		}
 		
 		else {
+			counter_reload += time;
 			
-			return true;
 		}
 	}
 	void  update(float time)
 	{
 		counter_spm += time;
 		if (currammo == 0) {
-			counter_reload += time;
+			reload(time);
 		}
 		//dx = cos(angle*DEGTORAD) * 6;
 		//dy = sin(angle*DEGTORAD) * 6;

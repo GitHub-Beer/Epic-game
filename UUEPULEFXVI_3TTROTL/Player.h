@@ -15,10 +15,10 @@ public:
 	player()
 	{
 		name = "player";
-		acc = 15;
-		maxSpeed = 40;
+		acc = 2;
+		maxSpeed = 10;
 		stopspeed = 0.8;
-		sf = 0.00000001;
+		sf = 0.00001;
 		//angle = 0;
 	}
 	float getAcc() {
@@ -35,28 +35,28 @@ public:
 			
 			if (dy > 0 || dx < 0) {
 				if (dy > 0 && dx < 0) {
-					dy *= stopspeed*1;
-					dx *= stopspeed*1;
+					dy *= stopspeed*time;
+					dx *= stopspeed*time;
 					dx += sf;
 					dy -= sf;
 				}
 				else if (dy > 0&&dx>0) {
-					dy *= stopspeed*1;
+					dy *= stopspeed*time;
 					dy -= sf;
-					dx += acc*1;
+					dx += acc*time;
 				}
 				else {
-					dx *= stopspeed*1;
+					dx *= stopspeed*time;
 					dx += sf;
-					dy -= acc*1;
+					dy -= acc*time;
 				}
 			
 			}
 			else {
 				//dx += cos(angle*DEGTORAD)*0.2;
 				//dy += sin(angle*DEGTORAD)*0.2;
-				dy -= acc*1;
-				dx += acc*1;
+				dy -= acc*time;
+				dx += acc*time;
 				//angle = 0;
 			}
 		}
@@ -66,28 +66,28 @@ public:
 			//dy += sin(angle*DEGTORAD)*0.2;
 			if (dy>0||dx>0) {
 				if (dy > 0 && dx > 0) {
-					dy *= stopspeed*1;
-					dx *= stopspeed*1;
+					dy *= stopspeed*time;
+					dx *= stopspeed*time;
 					dx -= sf;
 					dy -= sf;
 				
 				}
 				else if (dy > 0&&dx<0) {
-					dy *= stopspeed*1;
+					dy *= stopspeed*time;
 					dy -= sf;
-					dx -= acc*1;
+					dx -= acc*time;
 				}
 				else
 				{
-					dx *= stopspeed*1;
+					dx *= stopspeed*time;
 					dx -= sf;
-					dy -= acc*1;
+					dy -= acc*time;
 				}
 
 			}
 			else {
-				dy -= acc*1;
-				dx -= acc*1;
+				dy -= acc*time;
+				dx -= acc*time;
 				//angle = 0;
 			}
 		}
@@ -97,30 +97,30 @@ public:
 			//dy += sin(angle*DEGTORAD)*0.2;
 			if (dy<0||dx>0) {
 				if (dy < 0&&dx>0) {
-					dy *= stopspeed*1;
-					dx *= stopspeed*1;
+					dy *= stopspeed*time;
+					dx *= stopspeed*time;
 					dy += sf;
 					dx -= sf;
 				}
 				else if (dy<0 && dx>0)
 				{
-					dy *= stopspeed*1;
+					dy *= stopspeed*time;
 					dy += sf;
-					dx -= acc*1;
+					dx -= acc*time;
 				}
 				else
 				{
-					dx *= stopspeed*1;
+					dx *= stopspeed*time;
 					dx -= sf;
-					dy += acc*1;
+					dy += acc*time;
 
 				}
 
 			}
 
 		else {
-			dy += acc*1;
-			dx -= acc*1;
+			dy += acc*time;
+			dx -= acc*time;
 			//angle = 0;
 		}
 		}
@@ -130,50 +130,50 @@ public:
 			{
 				if (dx<0 && dy<0)
 				{
-					dx *= stopspeed*1;
-					dy *= stopspeed*1;
+					dx *= stopspeed*time;
+					dy *= stopspeed*time;
 					dx += sf;
 					dy += sf;
 				}
 				else if (dx<0 && dy>0)
 				{
-					dx *= stopspeed*1;
+					dx *= stopspeed*time;
 					dx += sf;
-					dy += acc*1;
+					dy += acc*time;
 				}
 				else
 				{
-					dy *= stopspeed*1;
+					dy *= stopspeed*time;
 					dy += sf;
-					dx += acc*1;
+					dx += acc*time;
 				}
 			}
 			//dx += cos(angle*DEGTORAD)*0.2;
 			//dy += sin(angle*DEGTORAD)*0.2;
 		else {
-			dy += acc*1;
-			dx += acc*1;
+			dy += acc*time;
+			dx += acc*time;
 		}
 			//angle = 0;
 		}
 		else if (thrustU)
 		{
 			if (dy > 0) {
-				dy *= stopspeed*1;
+				dy *= stopspeed*time;
 				dy -=sf;
 				//dx += cos(angle*DEGTORAD)*0.2;
 				//dy += sin(angle*DEGTORAD)*0.2;
 			}
 			else {
-				dy -= acc*1;
+				dy -= acc*time;
 			}
-			dx *= stopspeed*1;
+			dx *= stopspeed*time;
 			//angle = 0;
 		}
 		//else
 		//{
-		//	dx *= 0.1*1;
-		//	dy *= 0.1*1;
+		//	dx *= 0.time*time;
+		//	dy *= 0.time*time;
 		//	//angle = 0;
 		//}
 
@@ -182,22 +182,22 @@ public:
 			//dx -= cos(angle*DEGTORAD)*0.2;
 			//dy -= sin(angle*DEGTORAD)*0.2;
 			if (dy < 0) {
-				dy *= stopspeed*1;
+				dy *= stopspeed*time;
 				dy += sf;
 				//dx += cos(angle*DEGTORAD)*0.2;
 				//dy += sin(angle*DEGTORAD)*0.2;
 			}
 			else {
-				dy += acc*1;
+				dy += acc*time;
 			}
-			dx *= stopspeed*1;
+			dx *= stopspeed*time;
 			//angle = 0;
-			//angle = 180;
+			//angle = time80;
 		}
 		//else
 		//{
-		//	dx *= 0.99*1;
-		//	dy *= 0.99*1;
+		//	dx *= 0.99*time;
+		//	dy *= 0.99*time;
 		//	//angle = 0;
 		//}
 
@@ -205,38 +205,38 @@ public:
 		{
 			//dy -= sin(angle*DEGTORAD)*0.2;
 			if (dx > 0) {
-				dx *= stopspeed*1;
+				dx *= stopspeed*time;
 				dx -= 0.05;
 				//dx += cos(angle*DEGTORAD)*0.2;
 				//dy += sin(angle*DEGTORAD)*0.2;
 			}
 			else {
-				dx -= acc*1;
+				dx -= acc*time;
 			}
-			dy *= stopspeed*1;//dx += sin(angle*DEGTORAD)*0.2;
+			dy *= stopspeed*time;//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
 			
 			//angle = -90;
 		}
 		//else
 		//{
-		//	dx *= 0.1*1;
-		//	dy *= 0.1*1;
+		//	dx *= 0.time*time;
+		//	dy *= 0.time*time;
 		//	//angle = 0;
 		//}
 
 		else if (thrustR)
 		{
 			if (dx < 0) {
-				dx *= stopspeed*1;
+				dx *= stopspeed*time;
 				dx += 0.05;
 				//dx += cos(angle*DEGTORAD)*0.2;
 				//dy += sin(angle*DEGTORAD)*0.2;
 			}
 			else {
-				dx += acc*1;
+				dx += acc*time;
 			}
-			dy *= stopspeed*1;//dx += sin(angle*DEGTORAD)*0.2;
+			dy *= stopspeed*time;//dx += sin(angle*DEGTORAD)*0.2;
 			//dy += cos(angle*DEGTORAD)*0.2;
 			
 			//angle = 90;
@@ -244,8 +244,8 @@ public:
 		
 		else
 		{
-			dx *= stopspeed*1;
-			dy *= stopspeed*1;
+			dx *= stopspeed*time;
+			dy *= stopspeed*time;
 			if (dx > 0) {
 				dx -= sf;
 			}
@@ -271,14 +271,14 @@ public:
 			dy*= maxSpeed/speed;
 		}
 
-		//x += dx;
-		//y += dy;
+		x += dx;
+		y += dy;
 
 
-		//if (x>maxW) x = maxW; if (x<0) x = 0;
-		//if (y>maxH) y = maxH; if (y<0) y = 0;
+		if(x>maxW) x = maxW; if (x<0) x = 0;
+		if (y>maxH) y = maxH; if (y<0) y = 0;
 		//if (isOutsideMap(dx*time, dy*time)) {
-			offsetEntities(dx*time, dy*time);
+			//offsetEntities(dx*time, dy*time);
 		//}
 	}
 

@@ -32,7 +32,9 @@ void generateMap(int mapType); //Map generator
 float getPlayerX();
 float getPlayerY();
 bool isCollide(Entity *a, Entity *b);
+
 int main();
+//int gameWon = false;
 void offsetEntities(int howMuchX, int howMuchY);
 bool isOutsideMap(int howMuchX, int howMuchY);
 
@@ -50,7 +52,7 @@ int updZombieLife(float time);
 #include "Zombie.h"
 #include "PassableWall.h"
 #include "Weapon.h"
-
+bool calculateDistance(Entity *b, weapon *c);
 //global variable
 float playerX;
 float playerY;
@@ -78,7 +80,8 @@ std::list < RectangleShape* >   bgRects; //background rectangls
 int main()
 
 {
-
+	int gameWonScore = 100;
+	bool mousePress = false;
 	std::random_device rd; // obtain a random number from hardware
 	std::mt19937 eng(rd()); // seed the generator
 
@@ -91,18 +94,22 @@ int main()
 	srand(time(0));
 	// Load the font from a file
 	sf::Font font;
-	if (!font.loadFromFile("fonts/BRADHITC.ttf"))
+	if (!font.loadFromFile("fonts/baksheeshregular.ttf"))
 	{
 		// error...
 	}
-	sf::Text text;
-
+	sf::Text text,reload;
+	View VieW;
 	// select the font
 	text.setFont(font);
 	text.setCharacterSize(28);
 	text.setColor(sf::Color::Red);
-	text.setStyle(sf::Text::Bold);
-
+	//text.setStyle(sf::Text::Bold);
+	
+	reload.setFont(font);
+	reload.setCharacterSize(20);
+	reload.setColor(Color::Color(255, 0, 0, 128));
+	//reload.setStyle(sf::Text::Bold);
 	sf::Text debug, gameover;
 
 	// select the font for debug
@@ -116,7 +123,7 @@ int main()
 	gameover.setCharacterSize(64);
 	gameover.setOutlineThickness(5);
 	gameover.setColor(sf::Color::Red);
-	gameover.setStyle(sf::Text::Bold);
+	//gameover.setStyle(sf::Text::Bold);
 	gameover.setPosition(sf::Vector2f(100, H / 2));
 	gameover.setString("GAME OVER!      press enter to restart");
 
@@ -124,7 +131,7 @@ int main()
 	//app.setFramerateLimit(120);
 
 
-	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9, t11, t12, t13, t14;
+	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9, t11, t12, t13, t14,t15;
 	t1.loadFromFile("images/Player_top.png");
 	t2.loadFromFile("images/background.png");
 	t3.loadFromFile("images/explosions/enemy_die.png");
@@ -139,7 +146,42 @@ int main()
 	t12.loadFromFile("images/background/stone.png");
 	t13.loadFromFile("images/background/bushes.png");
 	t14.loadFromFile("images/background/grass_14.png");
+	t14.loadFromFile("images/UI/lives.png");
 
+
+
+	//Weapons texture
+	Texture w1, w2, w3, w4, w5,w6;
+	w1.loadFromFile("images/weapons/rpg.png");
+	w2.loadFromFile("images/weapons/machine.png");
+	w3.loadFromFile("images/weapons/pistol.png");
+	w4.loadFromFile("images/weapons/rifle.png");
+	w5.loadFromFile("images/weapons/shotgun.png");
+	w6.loadFromFile("images/weapons/blackbox.png");
+	Animation arpg(w1, 0, 0, 300, 200, 1, 0);
+	Animation amachine(w2, 0, 0, 300, 200, 1, 0);
+	Animation apistol(w3, 0, 0, 300, 200, 1, 0);
+	Animation arifle(w4, 0, 0, 300, 200, 1, 0);
+	Animation ashotgun(w5, 0, 0, 300, 200, 1, 0);
+	//pickable texture
+	Texture p1, p2, p3, p4, p5, p6;
+	p1.loadFromFile("images/weapons/pickable/rpg_pick.png");
+	p2.loadFromFile("images/weapons/pickable/machine_pick.png");
+	p3.loadFromFile("images/weapons/pickable/pistol_pick.png");
+	p4.loadFromFile("images/weapons/pickable/rifle_pick.png");
+	p5.loadFromFile("images/weapons/pickable/shotgun_pick.png");
+	Animation p_rpg(p1, 0, 0, 90, 20, 1, 0);
+	Animation p_machine(p2, 0, 0, 91, 29, 1, 0);
+	Animation p_pistol(p3, 0, 0, 55, 31, 1, 0);
+	Animation p_rifle(p4, 0, 0, 89, 18, 1, 0);
+	Animation p_shotgun(p5, 0, 0, 85, 29, 1, 0);
+
+	/*Animation Ww1(w1, 0, 0, 300, 100, 1, 0);
+	Animation Ww2(w2, 0, 0, 300, 100, 1, 0);
+	Animation Ww3(w3, 0, 0, 300, 100, 1, 0);
+	Animation Ww4(w4, 0, 0, 300, 100, 1, 0);
+	Animation Ww5(w5, 0, 0, 300, 100, 1, 0);*/
+	RectangleShape weapons_ui(Vector2f(300/1.5, 100/1.5));
 
 	Sprite BCG(t9);
 	Sprite UPD(t9);
@@ -149,14 +191,19 @@ int main()
 	//RectangleShape rect(Ve;
 	t1.setSmooth(true);
 	t2.setSmooth(true);
+	t14.setSmooth(true);
+
 
 
 
 	RectangleShape rectangle(Vector2f(4, 4));
 	//sf::CircleShape octagon(4, 8);
 	RectangleShape rectangle1(Vector2f(200, 200));
-	int mMapX = 1000;
-	int mMapY = 500;
+	RectangleShape blackbox(Vector2f(300 / 1.5, 130 / 1.25));
+	RectangleShape livesbox(Vector2f(300 / 1.5, 130 / 1.25));
+
+	int mMapX = W/2-10-4*mapH;
+	int mMapY =H/2-10-4*mapW;
 
 	//Sprite background(t14);
 
@@ -178,19 +225,35 @@ int main()
 //	Animation bBackground(t14, 0, 0, 1600, 1600, 1, 0);
 
 
-	SoundBuffer buffer;
-	buffer.loadFromFile("weap_deserteagle_slmn_2.wav");
-	Sound sound(buffer);
-	SoundBuffer buf;
-	buf.loadFromFile("Jump.ogg");
-	Sound sou(buf);
+	SoundBuffer psound,ssound,msound,rsound,rpsound;
+	psound.loadFromFile("sound/weapon/pistol.wav");
+	ssound.loadFromFile("sound/weapon/shotgun.wav");
+	rsound.loadFromFile("sound/weapon/rifle.wav");
+	rpsound.loadFromFile("sound/weapon/RPG.wav");
+	msound.loadFromFile("sound/weapon/machinegun.wav");
+	
+	SoundBuffer kill;
+	//kill.loadFromFile("sound/kill/Jump.ogg");
+	kill.loadFromFile("sound/kill/hitmarker.wav");
+	Sound zkill(kill);
 	Music music;
-	music.openFromFile("Mario_Theme.ogg");
+	music.openFromFile("sound/Mario_Theme.ogg");
+	music.setLoop(true);
 	music.play();
 
-
-
-
+	
+	
+	
+	weapon *pistol=new weapon();
+	weapon *rifle=new weapon();
+	weapon *shotgun=new weapon();
+	weapon *rpg=new weapon();
+	weapon *machinegun=new weapon();
+	pistol->weaponSetup(psound, 60, 10, 5, 20, 1, 320,"pistol");
+	rifle->weaponSetup(rsound, 120, 30, 3, 50, 1, 720,"rifle");
+	shotgun->weaponSetup(ssound, 60, 8, 5, 30, 35, 320,"shotgun");
+	machinegun->weaponSetup(msound, 300, 240, 10, 20, 1, 500,"machine");
+	rpg->weaponSetup(rpsound, 40, 5, 10, 400, 1, 900,"rpg");
 
 	int randW, randH;
 
@@ -198,7 +261,7 @@ int main()
 	generateMap(0);
 	//generateMap(0);
 
-	//Sprite background(t11);
+	//Sprite background(t11);aaaaaa
 
 	//Make map entities
 	
@@ -210,7 +273,8 @@ int main()
 	//Weapon entity
 	float gTime = 0;//time of the game
 	weapon *w = new weapon();
-	w->weaponSetup("weap_deserteagle_slmn_2.wav", 500, 5, 1, 20, 50, 500);
+	w->weaponSetup(psound, 60, 2, 3, 20, 50, 500,"test");
+	w->weaponcopy(shotgun,msound);
 	entities.push_back(w);
 
 	for (int i = 0; i < maxW; i++)
@@ -344,48 +408,77 @@ int main()
 	while (app.isOpen())
 	{
 
-		if (livesRemaining >= 0)
+		if (livesRemaining >= 0 && zombiesKilled < gameWonScore)
 		{
 		//
-
+	
 		time = clock.getElapsedTime().asMilliseconds();
 		clock.restart();
 		time = time / 100;
-		if (time > 50) time = 50;
+		//if (time > 20) time = 20;
 
 		Event event;
 		while (app.pollEvent(event))
 		{
 			if (event.type == Event::Closed)
 				app.close();
+			
+			//if (event.type == Event::KeyPressed)
+			//app.setKeyRepeatEnabled(true);
+			if (Keyboard::isKeyPressed(Keyboard::Space))
+			{
+			//	if (event.mouseButton.button == sf::Mouse::Left)
+					//mousePress = true;
+					
+						//if (event.key.code == Keyboard::Space)
+						//while (event.type == Event::MouseButtonReleased)
+					{
 
-			if (event.type == Event::MouseButtonPressed)
-				if (event.key.code == Mouse::Left)
-				{
+						//bullet *b = new bullet();
+						//	sound.play();
+						//	b->settings(sBullet, p->x, p->y, p->angle, 10);
+						//	entities.push_back(b);
 
-					//bullet *b = new bullet();
-					//	sound.play();
-					//	b->settings(sBullet, p->x, p->y, p->angle, 10);
-					//	entities.push_back(b);
+						if (w->canshoot(time) && w->currammo > 0) {
 
-					//if (w->canshoot(time) /*&& w->currammo>0*/) {
-					if(true){
-						bulletsShot++;
-						for (int i = 0; i < rand() % w->spt; i++) {
-							bullet *b = new bullet();
-							b->settings(sBullet, p->x, p->y, p->angle - 45 + rand() % 90, 10);
-							b->xpos = p->x;
-							b->ypos = p->y;
-							entities.push_back(b);
+							bulletsShot++;
+							if (w->spt > 1) {
+								for (int i = 0; i < ((rand() % w->spt - w->spt / 10) + w->spt / 10); i++) {
+									//and() % (max_number + 1 - minimum_number) + minimum_number
+									bullet *b = new bullet();
+									b->settings(sBullet, p->x, p->y, p->angle - 45 + rand() % 90, 10);
+									b->xpos = p->x;
+									b->ypos = p->y;
+									entities.push_back(b);
+								}
+							}
+							else {
+								bullet *b = new bullet();
+								b->settings(sBullet, p->x, p->y, p->angle, 10);
+								b->xpos = p->x;
+								b->ypos = p->y;
+								entities.push_back(b);
+							}
+							w->shoot_sound();
+
+							w->currammo--;
+							w->counter_spm = 0;
 						}
-						//DE.play();
 
-						w->currammo--;
-						w->counter_spm = 0;
+
 					}
 
-
-				}
+	
+			}
+			//mousePress = false;
+			//if (sf::Event::KeyReleased)
+			//{
+			////	if (event.mouseButton.button == sf::Mouse::Left)
+			//		//mousePress = false;
+			//		zombiesKilled == 0;
+			//}
+			//if (event.mouseButton.button == sf::Mouse::Left)
+			
 		}
 		if (gTime>60000) {
 			zlcoef = updZombieLife(gTime);
@@ -423,6 +516,7 @@ int main()
 		else p->thrustL = false;
 		if (Keyboard::isKeyPressed(Keyboard::D)) p->thrustR = true;
 		else p->thrustR = false;
+
 		if (Keyboard::isKeyPressed(Keyboard::Num0)) gameMode = 0;
 		if (Keyboard::isKeyPressed(Keyboard::Num1)) gameMode = 1;
 		if (Keyboard::isKeyPressed(Keyboard::Num2)) gameMode = 2;
@@ -456,9 +550,59 @@ int main()
 						e->settings(sExplosion, a->x, a->y, a->angle, 1);
 
 						e->name = "explosion";
-						sou.play();
+						zkill.play();
 						entities.push_back(e);
+						//create pickable items
+						//if (rand() % 10 == 0) {
+							pickup *pik = new pickup();
+							pik->settings(bStone, a->x, a->y, a->angle, 25);
+							int x = rand( )% 3;
+							if (x == 0) {
+							//buff
+							}
+							else if (x == 1) {
+							//debuff
+							
+							}
+							else if (x == 2) {
+							//weapon
+								int y = rand() % 5;
+								if (y == 0) {
+								//pik->anim///
+									pik->type="pistol";
+									pik->settings(p_pistol, a->x, a->y, a->angle, 25);
 
+								}
+								if (y == 1) {
+									//pik->anim///
+									pik->type = "shotgun";
+									pik->settings(p_shotgun, a->x, a->y, a->angle, 25);
+
+								}
+								if (y == 2) {
+									//pik->anim///
+									pik->type = "rifle";
+									pik->settings(p_rifle, a->x, a->y, a->angle, 25);
+
+								}
+								if (y == 3) {
+									//pik->anim///
+									pik->type = "machinegun";
+									pik->settings(p_machine, a->x, a->y, a->angle, 25);
+
+								}
+								if (y == 4) {
+									//pik->anim///
+									pik->type = "rpg";
+									pik->settings(p_rpg, a->x, a->y, a->angle, 25);
+
+								}
+							
+							}
+
+						
+								entities.push_back(pik);
+						//}
 						/*for (int i = 0; i<2; i++)
 						{
 						if (a->R == 15) continue;
@@ -483,7 +627,33 @@ int main()
 						p->dx = 0; p->dy = 0;
 						livesRemaining--;
 					}
-
+				if (a->name == "player"&& b->name == "pickup") {
+				//weapons 
+					if (isCollide(a, b))
+					{
+						if (b->type == "pistol") {
+							w->weaponcopy(pistol, psound);
+						}
+						if (b->type == "rifle") {
+							w->weaponcopy(rifle, rsound);
+						}
+						if (b->type == "shotgun") {
+							w->weaponcopy(shotgun, ssound);
+						}
+						if (b->type == "machinegun") {
+							w->weaponcopy(machinegun, msound);
+						}
+						if (b->type == "rpg") {
+							w->weaponcopy(rpg, rpsound);
+						}
+						b->life = false;
+						//buff
+						//debuff
+					}
+				
+				
+				
+				}
 				if (a->name == "zombie" && b->name == "zombie")
 					if (isCollide(a, b))
 					{
@@ -547,10 +717,16 @@ int main()
 		else   p->anim = sPlayer;
 
 
-		for (auto e : entities)
+		for (auto e : entities) {
 			if (e->name == "explosion")
 				if (e->anim.isEnd()) e->life = 0;
-
+			if (e->name == "bullet") {
+				if (calculateDistance(e,w))
+					e->life = false;
+			}
+			
+			
+		}
 		if (rand() % 50 == 0)
 		{
 			if (rand() % 2 == 0)//Randomize location 1 Branch : Top/Bot or Left/Right , 2nd Branch , Top, Bot, Left, Right
@@ -684,12 +860,55 @@ int main()
 
 
 
+			
+
+			//SET VIEW
+			float viewX = 0;
+			float viewY = 0;
+			if (p->x < W / 2)viewX = W / 2; if (p->y < H / 2)viewY = H / 2;
+			if (p->x > (maxW - W / 2))viewX = maxW - W / 2; if (p->y > (maxH - H / 2))viewY = maxH - H / 2;
+			if (p->x > W / 2 & p->x < (maxW - W / 2))viewX = p->x; if (p->y > H / 2 & p->y < (maxH - H / 2))viewY = p->y;
+			/*if (p->y < H / 2 || p->x < W / 2) {
+				if (p->y < H / 2 && p->x < W / 2) {
+					VieW.setCenter(W / 2, H / 2);
+				}
+				else if (p->y < H / 2) {
+					VieW.setCenter(p->x, H / 2);
+				}
+				else if (p->x <W / 2) {
+					VieW.setCenter(W / 2, p->y);
+				}
+
+			}
+			else if (p->x >(maxW-W/2) || p->y >(maxH-H/2)) {
+				if (p->x >  (maxW - W / 2) && p->y > (maxH - H / 2)) {
+					VieW.setCenter((maxW - W / 2), (maxH - H / 2));
+				}
+				else if (p->x >(maxW - W / 2)) {
+					VieW.setCenter(maxW - W / 2, p->y);
+				}
+				
+				else if (p->y >(maxH - H / 2)) {
+					VieW.setCenter(p->x, (maxH - H / 2));
+				}
+			}*/
+		/*	else if (p->x<W / 2 && p->y>(maxH - H / 2)) {
+				VieW.setCenter(W / 2, maxH - H / 2);
+			}*/
+			/*else {
+				VieW.setCenter(p->x, p->y);
+			}*/
+			VieW.setCenter(viewX, viewY);
+			VieW.setSize(W, H);
+			app.setView(VieW);
+
+			////////////////////////////////////////////////////////////////////////////
+			//DRAW MAP//
+			//Minimap background
 			rectangle1.setFillColor(Color::Color(0, 0, 0, 128));
-			rectangle1.setPosition(mMapX, mMapY);
+			rectangle1.setPosition(viewX+mMapX, viewY+mMapY);
 			app.draw(rectangle1);
-
-
-			//Draw the map
+			//Minimap entities
 			for (auto i : entities) {
 
 				/*if (playerXpos/32== i&&playerYpos/32 == j) {
@@ -717,7 +936,7 @@ int main()
 				}
 				else if (i->name == "wall") 	rectangle.setFillColor(Color::White);
 
-				rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 + mMapX, (i->y / 32 * mapZoomVal) * 4 + mMapY);
+				rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 +viewX+mMapX, (i->y / 32 * mapZoomVal) * 4 +viewY+mMapY);
 				if (i->x >= 0 && i->y >= 0 &&
 					i->x < maxW / mapZoomVal && i->y < maxH / mapZoomVal)
 				{
@@ -736,17 +955,112 @@ int main()
 
 				}
 			}
-
-			//}
-			//	
-
-
 			//}		
 			//text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
-			text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
-				"                                                                                                            Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			//text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
+			//	"                                                                                                            Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			//text.setPosition(viewX-W/2,viewY-H/2);
+			//app.draw(text);
+			text.setColor(sf::Color::White);
+			text.setString("   " + std::to_string(w->currammo));// +"         Current weapon:" + w->type )
+			text.setPosition(viewX - W / 2+25, viewY + H / 2-48);
 			app.draw(text);
+			text.setColor(sf::Color::Red);
+
+			if (w->currammo == 0) {
+				reload.setString("Reloading... " + std::to_string(int(w->wreloadpercentage())) + "%");
+				reload.setPosition(p->x+30, p->y - 40);
+				app.draw(reload);
+			}
 			app.draw(debug);
+
+			//Lives UI
+			//text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
+			//	"                                                                                                            Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			//text.setPosition(viewX - W / 2, viewY - H / 2);
+			//app.draw(text);
+			//text.setColor(sf::Color::White);
+
+			//lives box
+			livesbox.setScale(0.5, 1);
+			livesbox.setFillColor(Color::Color(0, 0, 0, 150));
+			livesbox.setTexture(&t14);
+			livesbox.setPosition(viewX - (W / 2) + 10, viewY - (H / 2)+5);
+			app.draw(livesbox);
+
+			//score box
+			livesbox.setScale(1.15, 1);
+			livesbox.setFillColor(Color::Color(0, 0, 0, 150));
+			livesbox.setTexture(&t14);
+			livesbox.setPosition(viewX + (W / 2) - 10 - 230, viewY - (H / 2) + 5);
+			app.draw(livesbox);
+
+			//Lives UI text
+			text.setColor(sf::Color::White);
+			text.setCharacterSize(32);
+			text.setString("Lives:");//  Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			text.setPosition(viewX - W / 2 + 25, viewY - H / 2+ 15);
+			app.draw(text);
+			//
+			text.setCharacterSize(40);
+			text.setPosition(viewX - W / 2 + 55, viewY - H / 2+50);
+			text.setString(std::to_string(livesRemaining));
+			app.draw(text);
+			text.setCharacterSize(28);
+			//Score UI
+			text.setColor(sf::Color::White);
+			text.setCharacterSize(32);
+			text.setString("Zombies Killed");//  Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			text.setPosition(viewX + W / 2 - 25 -200, viewY - H / 2 + 5 +5);
+			app.draw(text);
+			//
+			text.setCharacterSize(40);
+			text.setPosition(viewX + W / 2 - 60 -75 -30, viewY - H / 2 + 40 + 5);
+			text.setString(std::to_string(zombiesKilled) + "/" + std::to_string(gameWonScore));
+			app.draw(text);
+			text.setCharacterSize(28);
+
+
+			//Weapon UIs
+			//black box
+			blackbox.setFillColor(Color::Color(0, 0, 0, 25));
+			blackbox.setPosition(viewX - (W / 2) + 5, viewY + (H / 2) - 116);
+			app.draw(blackbox);
+
+			//weapon
+			weapons_ui.setPosition(viewX - (W / 2) + 5, viewY + (H / 2) - 100);
+			//shadow
+			weapons_ui.setScale(Vector2f(1, 1.125));
+			weapons_ui.setFillColor(sf::Color::Color(0, 0, 0, 50));
+			//weapons_ui.setTexture(&w6);
+			app.draw(weapons_ui);
+
+			//gun
+			weapons_ui.setScale(Vector2f(1, 1));
+			weapons_ui.setFillColor(sf::Color::White);
+			app.draw(weapons_ui);
+			if (w->type == "rpg")
+			{
+				weapons_ui.setTexture(&w1);
+			}
+			if (w->type == "machine")
+			{
+				weapons_ui.setTexture(&w2);
+			}
+			if (w->type == "pistol")
+			{
+				weapons_ui.setTexture(&w3);
+			}
+			if (w->type == "rifle")
+			{
+				weapons_ui.setTexture(&w4);
+			}
+			if (w->type == "shotgun")
+			{
+				weapons_ui.setTexture(&w5);
+			}
+			app.draw(weapons_ui);
+
 			app.display();
 		}
 		else
@@ -761,56 +1075,56 @@ int main()
 
 			rectangle1.setFillColor(Color::Color(0, 0, 0, 128));
 			rectangle1.setPosition(mMapX, mMapY);
-			app.draw(rectangle1);
+			//app.draw(rectangle1);
 
 
 			//Draw the map
-			for (auto i : entities) {
+			//for (auto i : entities) {
 
-				/*if (playerXpos/32== i&&playerYpos/32 == j) {
-				rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
+			//	/*if (playerXpos/32== i&&playerYpos/32 == j) {
+			//	rectangle.setFillColor(Color::Color(255, 0, 0, 128));*/
 
-				if (i->name == "p_wall") {
+			//	if (i->name == "p_wall") {
 
-					rectangle.setFillColor(Color::Color(0, 255, 0, 128));
+			//		rectangle.setFillColor(Color::Color(0, 255, 0, 128));
 
-				}
-				else if (i->name == "zombie") {
+			//	}
+			//	else if (i->name == "zombie") {
 
-					rectangle.setFillColor(Color::Cyan);
+			//		rectangle.setFillColor(Color::Cyan);
 
-				}
-				else if (i->name == "bullet") {
+			//	}
+			//	else if (i->name == "bullet") {
 
-					rectangle.setFillColor(Color::Blue);
+			//		rectangle.setFillColor(Color::Blue);
 
-				}
-				else if (i->name == "player") {
+			//	}
+			//	else if (i->name == "player") {
 
-					rectangle.setFillColor(Color::Red);
+			//		rectangle.setFillColor(Color::Red);
 
-				}
-				else if (i->name == "wall") 	rectangle.setFillColor(Color::White);
+			//	}
+			//	else if (i->name == "wall") 	rectangle.setFillColor(Color::White);
+			//	
+			//	rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 + mMapX, (i->y / 32 * mapZoomVal) * 4 + mMapY);
+			//	if (i->x >= 0 && i->y >= 0 &&
+			//		i->x < maxW / mapZoomVal && i->y < maxH / mapZoomVal)
+			//	{
+			//		if (i->name == "zombie")
+			//		{
+			//			rectangle.setSize((Vector2f(5 * mapZoomVal, 5 * mapZoomVal)));
+			//			app.draw(rectangle);
 
-				rectangle.setPosition((i->x / 32 * mapZoomVal) * 4 + mMapX, (i->y / 32 * mapZoomVal) * 4 + mMapY);
-				if (i->x >= 0 && i->y >= 0 &&
-					i->x < maxW / mapZoomVal && i->y < maxH / mapZoomVal)
-				{
-					if (i->name == "zombie")
-					{
-						rectangle.setSize((Vector2f(5 * mapZoomVal, 5 * mapZoomVal)));
-						app.draw(rectangle);
+			//		}
+			//		else
+			//		{
+			//			rectangle.setSize((Vector2f(3 * mapZoomVal, 3 * mapZoomVal)));
+			//			app.draw(rectangle);
 
-					}
-					else
-					{
-						rectangle.setSize((Vector2f(3 * mapZoomVal, 3 * mapZoomVal)));
-						app.draw(rectangle);
+			//		}
 
-					}
-
-				}
-			}
+			//	}
+			//}
 
 			//}
 			//	
@@ -821,16 +1135,30 @@ int main()
 			//text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
 			//	"                                                                                                    Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
 			
+
+
 			app.draw(text);
+			gameover.setColor(Color::Green);
+			gameover.setString("     GAME WON!!!   press enter to restart");
+			if (livesRemaining < 0)
+			{
+				gameover.setColor(sf::Color::Red);
+				//gameover.setStyle(sf::Text::Bold);
+				gameover.setPosition(sf::Vector2f(100, H / 2));
+				gameover.setString("GAME OVER!      press enter to restart");
+
+			}
 			app.draw(gameover);
 
 			app.draw(debug);
+
 			app.display();
 			if (Keyboard::isKeyPressed(Keyboard::Return))
 			{
 				livesRemaining = 3;
 				zombiesKilled = 0;
 				bulletsShot = 0;
+				//gameWon = false;
 		
 			}
 			for (auto i : entities)
@@ -1009,6 +1337,8 @@ bool isTooClose(float xPos, float yPos)
 
 float getPlayerX() { return playerX; }
 float getPlayerY() { return playerY; }
+
+
 
 bool calculateDistance(Entity *b, weapon *c) {
 	return abs(sqrt((b->x - b->xpos)*(b->x - b->xpos) +

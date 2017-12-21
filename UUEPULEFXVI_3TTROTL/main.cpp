@@ -92,7 +92,7 @@ int main()
 	srand(time(0));
 	// Load the font from a file
 	sf::Font font;
-	if (!font.loadFromFile("fonts/BRADHITC.ttf"))
+	if (!font.loadFromFile("fonts/baksheeshregular.ttf"))
 	{
 		// error...
 	}
@@ -102,12 +102,12 @@ int main()
 	text.setFont(font);
 	text.setCharacterSize(28);
 	text.setColor(sf::Color::Red);
-	text.setStyle(sf::Text::Bold);
+	//text.setStyle(sf::Text::Bold);
 	
 	reload.setFont(font);
 	reload.setCharacterSize(20);
 	reload.setColor(Color::Color(255, 0, 0, 128));
-	reload.setStyle(sf::Text::Bold);
+	//reload.setStyle(sf::Text::Bold);
 	sf::Text debug, gameover;
 
 	// select the font for debug
@@ -121,7 +121,7 @@ int main()
 	gameover.setCharacterSize(64);
 	gameover.setOutlineThickness(5);
 	gameover.setColor(sf::Color::Red);
-	gameover.setStyle(sf::Text::Bold);
+	//gameover.setStyle(sf::Text::Bold);
 	gameover.setPosition(sf::Vector2f(100, H / 2));
 	gameover.setString("GAME OVER!      press enter to restart");
 
@@ -129,7 +129,7 @@ int main()
 	//app.setFramerateLimit(120);
 
 
-	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9, t11, t12, t13, t14;
+	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9, t11, t12, t13, t14,t15;
 	t1.loadFromFile("images/Player_top.png");
 	t2.loadFromFile("images/background.png");
 	t3.loadFromFile("images/explosions/enemy_die.png");
@@ -144,7 +144,30 @@ int main()
 	t12.loadFromFile("images/background/stone.png");
 	t13.loadFromFile("images/background/bushes.png");
 	t14.loadFromFile("images/background/grass_14.png");
+	t14.loadFromFile("images/UI/lives.png");
 
+
+
+	//Weapons texture
+	Texture w1, w2, w3, w4, w5,w6;
+	w1.loadFromFile("images/weapons/rpg.png");
+	w2.loadFromFile("images/weapons/machine.png");
+	w3.loadFromFile("images/weapons/pistol.png");
+	w4.loadFromFile("images/weapons/rifle.png");
+	w5.loadFromFile("images/weapons/shotgun.png");
+	w6.loadFromFile("images/weapons/blackbox.png");
+	Animation arpg(w1, 0, 0, 300, 200, 1, 0);
+	Animation amachine(w2, 0, 0, 300, 200, 1, 0);
+	Animation apistol(w3, 0, 0, 300, 200, 1, 0);
+	Animation arifle(w4, 0, 0, 300, 200, 1, 0);
+	Animation ashotgun(w5, 0, 0, 300, 200, 1, 0);
+
+	/*Animation Ww1(w1, 0, 0, 300, 100, 1, 0);
+	Animation Ww2(w2, 0, 0, 300, 100, 1, 0);
+	Animation Ww3(w3, 0, 0, 300, 100, 1, 0);
+	Animation Ww4(w4, 0, 0, 300, 100, 1, 0);
+	Animation Ww5(w5, 0, 0, 300, 100, 1, 0);*/
+	RectangleShape weapons_ui(Vector2f(300/1.5, 100/1.5));
 
 	Sprite BCG(t9);
 	Sprite UPD(t9);
@@ -154,12 +177,17 @@ int main()
 	//RectangleShape rect(Ve;
 	t1.setSmooth(true);
 	t2.setSmooth(true);
+	t14.setSmooth(true);
+
 
 
 
 	RectangleShape rectangle(Vector2f(4, 4));
 	//sf::CircleShape octagon(4, 8);
 	RectangleShape rectangle1(Vector2f(200, 200));
+	RectangleShape blackbox(Vector2f(300 / 1.5, 130 / 1.25));
+	RectangleShape livesbox(Vector2f(300 / 1.5, 130 / 1.25));
+
 	int mMapX = W/2-10-4*mapH;
 	int mMapY =H/2-10-4*mapW;
 
@@ -509,22 +537,32 @@ int main()
 								if (y == 0) {
 								//pik->anim///
 									pik->type="pistol";
+									pik->settings(apistol, a->x, a->y, a->angle, 25);
+
 								}
 								if (y == 1) {
 									//pik->anim///
 									pik->type = "shotgun";
+									pik->settings(ashotgun, a->x, a->y, a->angle, 25);
+
 								}
 								if (y == 2) {
 									//pik->anim///
 									pik->type = "rifle";
+									pik->settings(arifle, a->x, a->y, a->angle, 25);
+
 								}
 								if (y == 3) {
 									//pik->anim///
 									pik->type = "machinegun";
+									pik->settings(amachine, a->x, a->y, a->angle, 25);
+
 								}
 								if (y == 4) {
 									//pik->anim///
 									pik->type = "rpg";
+									pik->settings(arpg, a->x, a->y, a->angle, 25);
+
 								}
 							
 							}
@@ -886,19 +924,110 @@ int main()
 			}
 			//}		
 			//text.setString("Offset X: " + std::to_string(offset_x) + " Offset Y: " + std::to_string(offset_y) + " Player X: " + std::to_string(playerX) + " Player Y: " + std::to_string(playerY));
-			text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
-				"                                                                                                            Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
-			text.setPosition(viewX-W/2,viewY-H/2);
+			//text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
+			//	"                                                                                                            Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			//text.setPosition(viewX-W/2,viewY-H/2);
+			//app.draw(text);
+			text.setColor(sf::Color::White);
+			text.setString("   " + std::to_string(w->currammo));// +"         Current weapon:" + w->type )
+			text.setPosition(viewX - W / 2+25, viewY + H / 2-48);
 			app.draw(text);
-			text.setString("Ammo left:" + std::to_string(w->currammo)+"         Current weapon:"+w->type );
-			text.setPosition(viewX - W / 2+30, viewY + H / 2-30);
-			app.draw(text);
+			text.setColor(sf::Color::Red);
+
 			if (w->currammo == 0) {
 				reload.setString("Reloading... " + std::to_string(int(w->wreloadpercentage())) + "%");
 				reload.setPosition(p->x+30, p->y - 40);
 				app.draw(reload);
 			}
 			app.draw(debug);
+
+			//Lives UI
+			//text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
+			//	"                                                                                                            Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			//text.setPosition(viewX - W / 2, viewY - H / 2);
+			//app.draw(text);
+			//text.setColor(sf::Color::White);
+
+			//lives box
+			livesbox.setScale(0.5, 1);
+			livesbox.setFillColor(Color::Color(0, 0, 0, 150));
+			livesbox.setTexture(&t14);
+			livesbox.setPosition(viewX - (W / 2) + 10, viewY - (H / 2)+5);
+			app.draw(livesbox);
+
+			//score box
+			livesbox.setScale(1.15, 1);
+			livesbox.setFillColor(Color::Color(0, 0, 0, 150));
+			livesbox.setTexture(&t14);
+			livesbox.setPosition(viewX + (W / 2) - 10 - 230, viewY - (H / 2) + 5);
+			app.draw(livesbox);
+
+			//Lives UI text
+			text.setColor(sf::Color::White);
+			text.setCharacterSize(32);
+			text.setString("Lives:");//  Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			text.setPosition(viewX - W / 2 + 25, viewY - H / 2+ 15);
+			app.draw(text);
+			//
+			text.setCharacterSize(40);
+			text.setPosition(viewX - W / 2 + 55, viewY - H / 2+50);
+			text.setString(std::to_string(livesRemaining));
+			app.draw(text);
+			text.setCharacterSize(28);
+			//Score UI
+			text.setColor(sf::Color::White);
+			text.setCharacterSize(32);
+			text.setString("Zombies Killed");//  Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
+			text.setPosition(viewX + W / 2 - 25 -200, viewY - H / 2 + 5 +5);
+			app.draw(text);
+			//
+			text.setCharacterSize(40);
+			text.setPosition(viewX + W / 2 - 60 -75, viewY - H / 2 + 40 + 5);
+			text.setString(std::to_string(zombiesKilled));
+			app.draw(text);
+			text.setCharacterSize(28);
+
+
+			//Weapon UIs
+			//black box
+			blackbox.setFillColor(Color::Color(0, 0, 0, 25));
+			blackbox.setPosition(viewX - (W / 2) + 5, viewY + (H / 2) - 116);
+			app.draw(blackbox);
+
+			//weapon
+			weapons_ui.setPosition(viewX - (W / 2) + 5, viewY + (H / 2) - 100);
+			//shadow
+			weapons_ui.setScale(Vector2f(1, 1.125));
+			weapons_ui.setFillColor(sf::Color::Color(0, 0, 0, 50));
+			//weapons_ui.setTexture(&w6);
+			app.draw(weapons_ui);
+
+			//gun
+			weapons_ui.setScale(Vector2f(1, 1));
+			weapons_ui.setFillColor(sf::Color::White);
+			app.draw(weapons_ui);
+			if (w->type == "rpg")
+			{
+				weapons_ui.setTexture(&w1);
+			}
+			if (w->type == "machine")
+			{
+				weapons_ui.setTexture(&w2);
+			}
+			if (w->type == "pistol")
+			{
+				weapons_ui.setTexture(&w3);
+			}
+			if (w->type == "rifle")
+			{
+				weapons_ui.setTexture(&w4);
+			}
+			if (w->type == "shotgun")
+			{
+				weapons_ui.setTexture(&w5);
+			}
+			app.draw(weapons_ui);
+
 			app.display();
 		}
 		else
@@ -973,6 +1102,8 @@ int main()
 			//text.setString("Lives Remaining: " + std::to_string(livesRemaining) +
 			//	"                                                                                                    Score: " + std::to_string(zombiesKilled));//+ "Bullets Shot" + std::to_string(bulletsShot));
 			
+
+
 			app.draw(text);
 			app.draw(gameover);
 

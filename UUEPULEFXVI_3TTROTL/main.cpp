@@ -38,7 +38,7 @@ int main();
 void offsetEntities(int howMuchX, int howMuchY);
 bool isOutsideMap(int howMuchX, int howMuchY);
 
-int mapZoomVal = 2; //On the minimap this number defines the zoom level of the map , 1x ,2x zoom etc
+int mapZoomVal = 1; //On the minimap this number defines the zoom level of the map , 1x ,2x zoom etc
 int updZombieLife(float time);
 
 //Include all other parts of the game
@@ -136,7 +136,7 @@ int main()
 	t2.loadFromFile("images/background.png");
 	t3.loadFromFile("images/explosions/enemy_die.png");
 	t4.loadFromFile("images/enemy_move.png");
-	t5.loadFromFile("images/fire_red.png");
+	t5.loadFromFile("images/Bullet.png");
 	t6.loadFromFile("images/rock_small.png");
 	t7.loadFromFile("images/explosions/type_B.png");
 	t8.loadFromFile("images/LEG_ANIM1.png");
@@ -144,7 +144,7 @@ int main()
 	t9.loadFromFile("images/background/bcg.png");
 	t11.loadFromFile("images/background/grass.png");
 	t12.loadFromFile("images/background/stone.png");
-	t13.loadFromFile("images/background/bushes.png");
+	t13.loadFromFile("images/background/Bush.png");
 	t14.loadFromFile("images/background/grass_14.png");
 	t14.loadFromFile("images/UI/lives.png");
 
@@ -210,7 +210,7 @@ int main()
 	Animation sExplosion(t3, 0, 0, 120.5, 73, 6, 0.1);
 	Animation sRock(t4, 0, 0, 120.5, 53, 6, 0.1);
 	Animation sRock_small(t6, 0, 0, 64, 64, 16, 0.2);
-	Animation sBullet(t5, 0, 0, 32, 64, 16, 0.8);
+	Animation sBullet(t5, 0, 0, 18, 38, 1, 0);
 
 	Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
 	//Animation sPlayer(t1, 0, 0, 57, 99, 1, 0);
@@ -237,7 +237,7 @@ int main()
 	kill.loadFromFile("sound/kill/hitmarker.wav");
 	Sound zkill(kill);
 	Music music;
-	music.openFromFile("sound/Mario_Theme.ogg");
+	music.openFromFile("sound/Theme.wav");
 	music.setLoop(true);
 	music.play();
 
@@ -274,7 +274,7 @@ int main()
 	float gTime = 0;//time of the game
 	weapon *w = new weapon();
 	w->weaponSetup(psound, 60, 2, 3, 20, 50, 500,"test");
-	w->weaponcopy(shotgun,msound);
+	w->weaponcopy(pistol,msound);
 	entities.push_back(w);
 
 	for (int i = 0; i < maxW; i++)
@@ -446,7 +446,9 @@ int main()
 								for (int i = 0; i < ((rand() % w->spt - w->spt / 10) + w->spt / 10); i++) {
 									//and() % (max_number + 1 - minimum_number) + minimum_number
 									bullet *b = new bullet();
+									
 									b->settings(sBullet, p->x, p->y, p->angle - 45 + rand() % 90, 10);
+									b->anim.sprite.setScale(0.3, 0.3);
 									b->xpos = p->x;
 									b->ypos = p->y;
 									entities.push_back(b);
@@ -455,6 +457,7 @@ int main()
 							else {
 								bullet *b = new bullet();
 								b->settings(sBullet, p->x, p->y, p->angle, 10);
+								b->anim.sprite.setScale(0.3, 0.3);
 								b->xpos = p->x;
 								b->ypos = p->y;
 								entities.push_back(b);
@@ -553,23 +556,23 @@ int main()
 						zkill.play();
 						entities.push_back(e);
 						//create pickable items
-						//if (rand() % 10 == 0) {
+						if (rand() % 10 == 0) {
 							pickup *pik = new pickup();
 							pik->settings(bStone, a->x, a->y, a->angle, 25);
-							int x = rand( )% 3;
-							if (x == 0) {
-							//buff
-							}
-							else if (x == 1) {
-							//debuff
+							//int x = rand() % 3;
+							//if (x == 0) {
+								//buff
 							
-							}
-							else if (x == 2) {
-							//weapon
-								int y = rand() % 5;
+							//else if (x == 1) {
+								//debuff
+
+							
+							
+								//weapon
+								int y = rand() % 4;
 								if (y == 0) {
-								//pik->anim///
-									pik->type="pistol";
+									//pik->anim///
+									pik->type = "pistol";
 									pik->settings(p_pistol, a->x, a->y, a->angle, 25);
 
 								}
@@ -591,18 +594,20 @@ int main()
 									pik->settings(p_machine, a->x, a->y, a->angle, 25);
 
 								}
-								if (y == 4) {
+								//if (y == 4) {
 									//pik->anim///
-									pik->type = "rpg";
-									pik->settings(p_rpg, a->x, a->y, a->angle, 25);
+									//->type = "rpg";
+									//pik->settings(p_rpg, a->x, a->y, a->angle, 25);
 
-								}
+								//}
+
 							
-							}
-
+							
+						
 						
 								entities.push_back(pik);
-						//}
+
+						}
 						/*for (int i = 0; i<2; i++)
 						{
 						if (a->R == 15) continue;
@@ -638,14 +643,14 @@ int main()
 							w->weaponcopy(rifle, rsound);
 						}
 						if (b->type == "shotgun") {
-							w->weaponcopy(shotgun, ssound);
+							w->weaponcopy(shotgun, psound);
 						}
 						if (b->type == "machinegun") {
 							w->weaponcopy(machinegun, msound);
 						}
-						if (b->type == "rpg") {
-							w->weaponcopy(rpg, rpsound);
-						}
+						//if (b->type == "rpg") {
+							//w->weaponcopy(rpg, rpsound);
+						//}
 						b->life = false;
 						//buff
 						//debuff
@@ -1139,13 +1144,15 @@ int main()
 
 			app.draw(text);
 			gameover.setColor(Color::Green);
-			gameover.setString("     GAME WON!!!   press enter to restart");
+			gameover.setPosition(sf::Vector2f(p->x, p->y));
+			gameover.setString("\GAME WON!!!");
 			if (livesRemaining < 0)
 			{
 				gameover.setColor(sf::Color::Red);
 				//gameover.setStyle(sf::Text::Bold);
-				gameover.setPosition(sf::Vector2f(100, H / 2));
-				gameover.setString("GAME OVER!      press enter to restart");
+				gameover.setPosition(sf::Vector2f(p->x, p->y));
+				gameover.setString("GAME OVER!");
+				//w->weaponcopy(pistol, psound);
 
 			}
 			app.draw(gameover);

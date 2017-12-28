@@ -80,6 +80,7 @@ std::list < RectangleShape* >   bgRects; //background rectangls
 int main()
 
 {
+	int scene = 2;
 	int gameWonScore = 100;
 	bool mousePress = false;
 	std::random_device rd; // obtain a random number from hardware
@@ -131,7 +132,7 @@ int main()
 	//app.setFramerateLimit(120);
 
 
-	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9, t11, t12, t13, t14,t15;
+	Texture t1, t2, t3, t4, t5, t6, t7, t8, t9, t11, t12, t13, t14,t15,t21,t22,t23,t24;
 	t1.loadFromFile("images/Player_top.png");
 	t2.loadFromFile("images/background.png");
 	t3.loadFromFile("images/explosions/enemy_die.png");
@@ -141,11 +142,22 @@ int main()
 	t7.loadFromFile("images/explosions/type_B.png");
 	t8.loadFromFile("images/LEG_ANIM1.png");
 	///
-	t9.loadFromFile("images/background/bcg.png");
-	t11.loadFromFile("images/background/grass.png");
-	t12.loadFromFile("images/background/stone.png");
-	t13.loadFromFile("images/background/bushes.png");
-	t14.loadFromFile("images/background/grass_14.png");
+	if (scene == 1) {
+		//t9.loadFromFile("images/background/bcg.png");
+		t11.loadFromFile("images/background/grass.png");
+		t12.loadFromFile("images/background/stone.png");
+		t13.loadFromFile("images/background/bushes.png");
+		//t14.loadFromFile("images/background/grass_14.png");
+	}
+	if (scene = 2) {
+		t11.loadFromFile("images/scene2/bg.png"); //BG
+		t12.loadFromFile("images/scene2/skull.png");
+		t13.loadFromFile("images/scene2/cactus.png");
+		t21.loadFromFile("images/scene2/stone1.png");
+		t22.loadFromFile("images/scene2/stone2.png");
+		t23.loadFromFile("images/scene2/stone3.png");
+		t24.loadFromFile("images/scene2/tree.png");
+	}
 	t14.loadFromFile("images/UI/lives.png");
 
 
@@ -219,9 +231,25 @@ int main()
 	Animation sLeg(t1, 0, 0, 57, 99, 1, 0);
 
 	//Background entities
+	if (scene == 1) {	
+
+		Animation bGrass(t11, 0, 0, 32, 32, 1, 0);
+		Animation bStone(t12, 0, 0, 32, 32, 1, 0); // skul;
+		Animation bBushes(t13, 0, 0, 32, 32, 1, 0);//cactus
+	}
+	if (scene == 2) {
+		Animation bGrass(t11, 0, 0, 32, 32, 1, 0);
+		Animation bStone(t12, 0, 0, 34, 42, 1, 0); // skul;
+		Animation bBushes(t13, 0, 0, 40, 61, 1, 0);//cactus
+	}
 	Animation bGrass(t11, 0, 0, 32, 32, 1, 0);
-	Animation bStone(t12, 0, 0, 32, 32, 1, 0);
-	Animation bBushes(t13, 0, 0, 32, 32, 1, 0);
+	Animation bStone(t12, 0, 0, 34, 42, 1, 0); // skul;
+	Animation bBushes(t13, 0, 0, 40, 61, 1, 0);//cactus
+	Animation bStone1(t21, 0, 0, 48, 46, 1, 0);
+	Animation bStone2(t22, 0, 0, 65, 60, 1, 0);
+	Animation bStone3(t23, 0, 0, 50, 49, 1, 0);
+	Animation bTree(t24, 0, 0, 69, 104, 1, 0);
+
 //	Animation bBackground(t14, 0, 0, 1600, 1600, 1, 0);
 
 
@@ -302,7 +330,7 @@ int main()
 				}
 				if (gameState[i][j] == '5') {
 					wall *w = new wall();
-					w->settings(bStone, i, j, 0, 25);//wall
+					w->settings(bStone, i, j, -90, 25);//wall
 					entities.push_back(w);
 					//Draw background rectangles
 					RectangleShape *bgRectangle = new RectangleShape(Vector2f(32, 32));
@@ -313,7 +341,7 @@ int main()
 				}
 				else if (gameState[i][j] == '6') {
 					p_wall *pw = new p_wall();
-					pw->settings(bBushes, i, j, 0, 25);//wall 
+					pw->settings(bBushes, i, j, -90, 25);//wall 
 					entities.push_back(pw);
 					//Draw background rectangles
 					RectangleShape *bgRectangle = new RectangleShape(Vector2f(32, 32));
@@ -321,7 +349,46 @@ int main()
 					bgRectangle->setPosition(Vector2f(i, j));
 					bgRects.push_back(bgRectangle);
 				}
-
+				else if (gameState[i][j] == '7') {
+					p_wall *pw = new p_wall();
+					pw->settings(bStone1, i, j, -90, 25);//wall 
+					entities.push_back(pw);
+					//Draw background rectangles
+					RectangleShape *bgRectangle = new RectangleShape(Vector2f(32, 32));
+					bgRectangle->setTexture(&t11);
+					bgRectangle->setPosition(Vector2f(i, j));
+					bgRects.push_back(bgRectangle);
+				}
+				else if (gameState[i][j] == '8') {
+					p_wall *pw = new p_wall();
+					pw->settings(bStone2, i, j, -90, 25);//wall 
+					entities.push_back(pw);
+					//Draw background rectangles
+					RectangleShape *bgRectangle = new RectangleShape(Vector2f(32, 32));
+					bgRectangle->setTexture(&t11);
+					bgRectangle->setPosition(Vector2f(i, j));
+					bgRects.push_back(bgRectangle);
+				}
+				else if (gameState[i][j] == '9') {
+					p_wall *pw = new p_wall();
+					pw->settings(bStone3, i, j, -90, 25);//wall 
+					entities.push_back(pw);
+					//Draw background rectangles
+					RectangleShape *bgRectangle = new RectangleShape(Vector2f(32, 32));
+					bgRectangle->setTexture(&t11);
+					bgRectangle->setPosition(Vector2f(i, j));
+					bgRects.push_back(bgRectangle);
+				}
+				else if (gameState[i][j] == '10') {
+					p_wall *pw = new p_wall();
+					pw->settings(bTree, i, j, -90, 25);//wall 
+					entities.push_back(pw);
+					//Draw background rectangles
+					RectangleShape *bgRectangle = new RectangleShape(Vector2f(32, 32));
+					bgRectangle->setTexture(&t11);
+					bgRectangle->setPosition(Vector2f(i, j));
+					bgRects.push_back(bgRectangle);
+				}
 				//else if (gameState[i][j] == '11') {
 				//	wall *w = new wall();
 					//w->settings(bStone, i, j, 0, 25);//wall 
@@ -530,6 +597,9 @@ int main()
 		if (Keyboard::isKeyPressed(Keyboard::Dash)) gameMode = 9;
 				if (Keyboard::isKeyPressed(Keyboard::Dash)) mapZoomVal = 1;
 				if (Keyboard::isKeyPressed(Keyboard::Equal)) mapZoomVal =  2; // Only for testing, has bugs
+
+				if (Keyboard::isKeyPressed(Keyboard::P)) scene = 0;
+				if (Keyboard::isKeyPressed(Keyboard::O)) scene = 0;
 
 
 
@@ -1139,6 +1209,7 @@ int main()
 
 			app.draw(text);
 			gameover.setColor(Color::Green);
+			gameover.setPosition(sf::Vector2f(100, H / 2));
 			gameover.setString("     GAME WON!!!   press enter to restart");
 			if (livesRemaining < 0)
 			{
@@ -1265,7 +1336,7 @@ void generateMap(int mapType) {
 	int x;
 	for (int i = 0; i < maxW; i++)
 	{
-		x = rand() % 70;
+		x = rand() % 100;
 
 		for (int j = 0; j < maxH; j++)
 		{
@@ -1277,18 +1348,36 @@ void generateMap(int mapType) {
 			//else
 			//{
 
-				x = rand() % 70;
+				x = rand() % 200;
 
-				if (x == 60) {
+				if (x == 10) {
 					gameState[i][j] = '5';
 
 				}
 
-				/*else*/ if (x == 26) {
+				if (x == 20) {
 					gameState[i][j] = '6';
 
+				}				
+				if (x == 30) {
+					gameState[i][j] = '7';
+
 				}
-				else if (x != 26 && x != 60)
+
+				if (x == 40) {
+					gameState[i][j] = '8';
+
+				}				
+				if (x == 50) {
+					gameState[i][j] = '9';
+
+				}
+
+				if (x == 60) {
+					gameState[i][j] = '10';
+
+				}
+				else if (x != 10 && x != 20 && x != 30 && x != 40 && x != 50 && x != 60)
 				{
 					gameState[i][j] = '0';
 				}

@@ -1,0 +1,7 @@
+TITLE "Hotline Miami"
+PERFORMER "Soundtrack"
+REM DISCNUMBER "1"
+FILE "Theme.wav" WAVE
+TRACK 01 AUDIO
+  INDEX 01 00:00:00
+  TITLE "Knock Knock"

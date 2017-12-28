@@ -248,7 +248,7 @@ int main()
 	Animation bStone1(t21, 0, 0, 48, 46, 1, 0);
 	Animation bStone2(t22, 0, 0, 65, 60, 1, 0);
 	Animation bStone3(t23, 0, 0, 50, 49, 1, 0);
-	Animation bTree(t23, 0, 0, 69, 104, 1, 0);
+	Animation bTree(t24, 0, 0, 69, 104, 1, 0);
 
 //	Animation bBackground(t14, 0, 0, 1600, 1600, 1, 0);
 

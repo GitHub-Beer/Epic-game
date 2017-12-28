@@ -5,6 +5,7 @@
 #include <list>
 #include<math.h>
 #include "constants.h"
+#include<SFML\Network.hpp>
 
 using namespace Constants;
 

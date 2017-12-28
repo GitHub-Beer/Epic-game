@@ -1139,6 +1139,7 @@ int main()
 
 			app.draw(text);
 			gameover.setColor(Color::Green);
+			gameover.setPosition(sf::Vector2f(100, H / 2));
 			gameover.setString("     GAME WON!!!   press enter to restart");
 			if (livesRemaining < 0)
 			{
